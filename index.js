@@ -20,12 +20,14 @@ let flamincome = {
         root.style.display = 'flex'
         root.style.backgroundColor = 'rgba(0,0,0,0.9)'
         root.style.border = '1px solid rgba(255,255,255,0.15)'
+        logo.id = Math.random().toFixed(50).substr(2)
         let refresh = function () {
             if (flamincome.__logo__.length == 0) {
+                $(`#${logo.id}`).text('loading ...')
                 logo.innerText = 'loading ...'
                 setTimeout(refresh, 1000)
             } else {
-                logo.innerText = flamincome.__logo__
+                $(`#${logo.id}`).text(flamincome.__logo__)
             }
         }
         refresh()
@@ -34,7 +36,21 @@ let flamincome = {
             root.appendChild(item)
         }
         return root
-    }
+    },
+    __welcome__: function () {
+        let welcome = document.createElement('div')
+        let welcome_header = document.createElement('p')
+        let welcome_logo = flamincome.__speak__(null)
+        let welcome_footer = document.createElement('p')
+        welcome_header.style.textAlign = 'center'
+        welcome_footer.style.textAlign = 'center'
+        welcome_header.innerHTML = 'welcome to <b>flamincome</b>'
+        welcome_footer.innerHTML = '<b>USE AT YOUR OWN RISK!!!</b>'
+        welcome.appendChild(welcome_header)
+        welcome.appendChild(welcome_logo)
+        welcome.appendChild(welcome_footer)
+        return welcome
+    },
 }
 
 
@@ -43,23 +59,9 @@ let flamincome = {
 
 $(document).ready(function () {
     flamincome.__init__()
-    let welcome = document.createElement('div')
-    let welcome_header = document.createElement('p')
-    let welcome_logo = flamincome.__speak__(null)
-    let welcome_footer = document.createElement('p')
-    welcome_header.id = 'welcome_header'
-    welcome_footer.id = 'welcome_footer'
-    welcome_header.style.textAlign = 'center'
-    welcome_footer.style.textAlign = 'center'
-    welcome_header.innerHTML = 'welcome to <b>flamincome</b>'
-    welcome_footer.innerHTML = 'get start at <a href="https://flamincome.github.io/docs">docs</a><br><b>USE AT YOUR OWN RISK!!!</b>'
-    welcome.appendChild(welcome_header)
-    welcome.appendChild(welcome_logo)
-    welcome.appendChild(welcome_footer)
-
     let $ptty = $('#terminal').Ptty({
         i18n: {
-            welcome: welcome.outerHTML,
+            welcome: flamincome.__welcome__().outerHTML,
         }
     });
     $ptty.register('command', {
