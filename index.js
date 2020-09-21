@@ -1,14 +1,55 @@
+let flamincome = {
+    __init__: function () {
+        let address = 'https://raw.githubusercontent.com/flamincome/logo/master/flamincome'
+        fetch(address).then(resp => resp.text()).then(text => {
+            flamincome.__logo__ = text
+        }).catch(err => {
+            console.log(err)
+            setTimeout(flamincome.__init__, 1000)
+        })
+    },
+    __logo__: '',
+    __speak__: function (item) {
+        let root = document.createElement('div')
+        let logo = document.createElement('pre')
+        logo.style.textAlign = 'center'
+        logo.style.backgroundColor = 'transparent'
+        logo.style.border = '0px'
+        root.style.justifyContent = 'center'
+        root.style.alignItems = 'center'
+        root.style.display = 'flex'
+        root.style.backgroundColor = 'rgba(0,0,0,0.9)'
+        root.style.border = '1px solid rgba(255,255,255,0.15)'
+        let refresh = function () {
+            if (flamincome.__logo__.length == 0) {
+                logo.innerText = 'loading ...'
+                setTimeout(refresh, 1000)
+            } else {
+                logo.innerText = flamincome.__logo__
+            }
+        }
+        refresh()
+        root.appendChild(logo)
+        if (item) {
+            root.appendChild(item)
+        }
+        return root
+    }
+}
+
+
+
+
+
 $(document).ready(function () {
+    flamincome.__init__()
     let welcome = document.createElement('div')
     let welcome_header = document.createElement('p')
-    let welcome_logo = document.createElement('pre')
+    let welcome_logo = flamincome.__speak__(null)
     let welcome_footer = document.createElement('p')
     welcome_header.id = 'welcome_header'
-    welcome_logo.id = 'welcome_logo'
     welcome_footer.id = 'welcome_footer'
     welcome_header.style.textAlign = 'center'
-    welcome_logo.style.textAlign = 'center'
-    welcome_logo.innerText = 'loading ...'
     welcome_footer.style.textAlign = 'center'
     welcome_header.innerHTML = 'welcome to <b>flamincome</b>'
     welcome_footer.innerHTML = 'get start at <a href="https://flamincome.github.io/docs">docs</a><br><b>USE AT YOUR OWN RISK!!!</b>'
