@@ -51,6 +51,9 @@ let flamincome = {
         welcome.appendChild(welcome_footer)
         return welcome
     },
+    ConnectWallet: function () {
+        window.ethereum.enable()
+    }
 }
 
 $(document).ready(function () {
@@ -60,6 +63,28 @@ $(document).ready(function () {
             welcome: flamincome.__welcome__().outerHTML,
         }
     });
+    $ptty.register('command', {
+        name: 'ConnectWallet',
+        method: function (cmd) {
+            // cmd.data = window.ethereum.enable()
+            // return cmd
+            $ptty.get_terminal('.prompt').hide()
+            let out = document.createElement('span')
+            out.id = Math.random().toFixed(50).substr(2)
+            window.ethereum.enable().then(v => {
+                $(`#${out.id}`).text('succ')
+                $ptty.get_terminal('.prompt').show()
+            }).catch(v => {
+                $(`#${out.id}`).text('fail')
+                $ptty.get_terminal('.prompt').show()
+            })
+            return {
+                out: out.outerHTML,
+            }
+        },
+        help: 'Typewriter effect. Usage: type [text to type out]'
+    });
+
     $ptty.register('command', {
         name: 'get-github',
         method: function (cmd) {
