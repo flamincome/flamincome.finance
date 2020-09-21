@@ -1,1 +1,3 @@
-# web
+# flamincome.finance
+
+UI of flamincome
