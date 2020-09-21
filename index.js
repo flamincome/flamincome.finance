@@ -45,17 +45,13 @@ let flamincome = {
         welcome_header.style.textAlign = 'center'
         welcome_footer.style.textAlign = 'center'
         welcome_header.innerHTML = 'welcome to <b>flamincome</b>'
-        welcome_footer.innerHTML = '<b>USE AT YOUR OWN RISK!!!</b>'
+        welcome_footer.innerHTML = 'docs is comming soon<br><b>USE AT YOUR OWN RISK!!!</b>'
         welcome.appendChild(welcome_header)
         welcome.appendChild(welcome_logo)
         welcome.appendChild(welcome_footer)
         return welcome
     },
 }
-
-
-
-
 
 $(document).ready(function () {
     flamincome.__init__()
