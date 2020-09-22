@@ -77,7 +77,6 @@ let flamincome = {
     __done__: function () {
         flamincome.__ptty__.get_terminal('.prompt').show()
         flamincome.__ptty__.get_terminal('.prompt').find('.input').focus()
-        flamincome.__ptty__.echo('123')
         let terminal = document.getElementById('terminal')
         terminal.scrollTop = terminal.scrollHeight
     },
