@@ -506,8 +506,293 @@ let flamincome = {
                 "type": "function"
             }
         ],
+        erc20: [
+            {
+                "inputs": [],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "owner",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "spender",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "value",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "Approval",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "from",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "to",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "value",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "Transfer",
+                "type": "event"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "owner",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "spender",
+                        "type": "address"
+                    }
+                ],
+                "name": "allowance",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "spender",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "approve",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "account",
+                        "type": "address"
+                    }
+                ],
+                "name": "balanceOf",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "decimals",
+                "outputs": [
+                    {
+                        "internalType": "uint8",
+                        "name": "",
+                        "type": "uint8"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "spender",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "subtractedValue",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "decreaseAllowance",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "spender",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "addedValue",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "increaseAllowance",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "name",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "symbol",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "totalSupply",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "recipient",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "transfer",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "sender",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "recipient",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "transferFrom",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
+        ],
     },
     __registry__: {
+        "ERC20USDT": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "ERC20TUSD": "0x0000000000085d4780B73119b644AE5ecd22b376",
+        "ERC20USDC": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "ERC20DAI": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        "ERC20wBTC": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+        "ERC20renBTC": "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D",
+        "ERC20sBTC": "0xfE18be6b3Bd88A2D2A7f928d00292E7a9963CfC6",
+        "ERC20wETH": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
         "VaultBaselinewBTC": "0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3",
         "StrategyBaselineAmmoniarenBTC": "0x19dc0A94b461d081A800660b2B121485d62feaC3",
         "StrategyBaselineCarbonGaugeBTCInstance": "0x15C7C218c8010b4793F37798EC76f8671e24d885",
@@ -609,7 +894,7 @@ $(document).ready(function () {
         }
     });
     $ptty.register('command', {
-        name: 'ConnectWallet',
+        name: 'connect-wallet',
         method: function (cmd) {
             $ptty.get_terminal('.prompt').hide()
             window.ethereum.send('eth_requestAccounts').then(v => {
@@ -631,7 +916,7 @@ $(document).ready(function () {
         help: 'connect wallet'
     });
     $ptty.register('command', {
-        name: 'ListRegistry',
+        name: 'list-registry',
         method: function (cmd) {
             let filter = ''
             if (cmd[1]) {
@@ -667,17 +952,20 @@ $(document).ready(function () {
         help: 'list registry'
     });
     $ptty.register('command', {
-        name: 'GetFBalanceOfMe',
+        name: 'get-balance-of-ftoken-by-symbol',
         method: function (cmd) {
             if (!flamincome.__accounts__) {
                 return {
-                    out: '<b>ConnectWallet</b> first',
+                    out: '<b>connect-wallet</b> first',
                 }
             }
             if (!cmd[1]) {
                 return {
-                    out: 'Usage: GetFBalanceOfMe &lt;SYMBOL&gt;',
+                    out: 'Usage: get-balance-of-ftoken-by-symbol &lt;SYMBOL&gt; [ACCOUNT_ADDRESS]',
                 }
+            }
+            if (!cmd[2]) {
+                cmd[2] = flamincome.__accounts__[0]
             }
             let vault = flamincome.__registry__[`VaultBaseline${cmd[1]}`]
             if (!vault) {
@@ -692,7 +980,7 @@ $(document).ready(function () {
             Promise.all([balanceOf, decimals]).then(vals => {
                 let balanceOf = vals[0]
                 let decimals = parseInt(vals[1])
-                balanceOf = balanceOf.padStart(decimals,'0')
+                balanceOf = balanceOf.padStart(decimals, '0')
                 let position = balanceOf.length - decimals
                 var output = [balanceOf.slice(0, position), balanceOf.slice(position)].join('.');
                 $('.content .cmd_out:last').empty()
@@ -704,30 +992,33 @@ $(document).ready(function () {
                 out: '...',
             }
         },
-        options: [1],
+        options: [1, 2],
         help: 'get flamincomed token balance'
     });
     $ptty.register('command', {
-        name: 'GetERC20BalanceOfMe',
+        name: 'get-balance-of-erc20-by-address',
         method: function (cmd) {
             if (!flamincome.__accounts__) {
                 return {
-                    out: '<b>ConnectWallet</b> first',
+                    out: '<b>connect-wallet</b> first',
                 }
             }
             if (!cmd[1]) {
                 return {
-                    out: 'Usage: GetBalanceOfMe &lt;TOKENADDR&gt;',
+                    out: 'Usage: get-balance-of-erc20-by-address &lt;TOKEN_ADDRESS&gt; [ADDRESS]',
                 }
+            }
+            if (!cmd[2]) {
+                cmd[2] = flamincome.__accounts__[0]
             }
             $ptty.get_terminal('.prompt').hide()
             let vault = new web3.eth.Contract(flamincome.__abi__.vault_baseline, cmd[1])
-            let balanceOf = vault.methods.balanceOf(flamincome.__accounts__[0]).call()
+            let balanceOf = vault.methods.balanceOf(cmd[2]).call()
             let decimals = vault.methods.decimals().call()
             Promise.all([balanceOf, decimals]).then(vals => {
                 let balanceOf = vals[0]
                 let decimals = parseInt(vals[1])
-                balanceOf = balanceOf.padStart(decimals,'0')
+                balanceOf = balanceOf.padStart(decimals, '0')
                 let position = balanceOf.length - decimals
                 var output = [balanceOf.slice(0, position), balanceOf.slice(position)].join('.');
                 $('.content .cmd_out:last').empty()
@@ -739,7 +1030,231 @@ $(document).ready(function () {
                 out: '...',
             }
         },
-        options: [1],
+        options: [1, 2],
         help: 'get erc20 token balance'
+    });
+    $ptty.register('command', {
+        name: 'deposit-token-to-vault',
+        method: function (cmd) {
+            if (!flamincome.__accounts__) {
+                return {
+                    out: '<b>connect-wallet</b> first',
+                }
+            }
+            if (!cmd[1]) {
+                return {
+                    out: 'Usage: deposit-token-to-vault &lt;SYMBOL&gt; [AMOUNT]',
+                }
+            }
+            let amount = cmd[2]
+            let vault = flamincome.__registry__[`VaultBaseline${cmd[1]}`]
+            if (!vault) {
+                return {
+                    out: `the vault of ${cmd[1]} not found in the registry`,
+                }
+            }
+            let erc20 = flamincome.__registry__[`ERC20${cmd[1]}`]
+            if (!erc20) {
+                return {
+                    out: `the erc20 token of ${cmd[1]} not found in the registry`,
+                }
+            }
+            $ptty.get_terminal('.prompt').hide()
+            vault = new web3.eth.Contract(flamincome.__abi__.vault_baseline, vault)
+            erc20 = new web3.eth.Contract(flamincome.__abi__.erc20, erc20)
+            let allowance = erc20.methods.allowance(flamincome.__accounts__[0], vault._address).call()
+            let balanceOf = erc20.methods.balanceOf(flamincome.__accounts__[0]).call()
+            let decimals = erc20.methods.decimals().call()
+            Promise.all([balanceOf, decimals, allowance]).then(vals => {
+                let num = vals[0]
+                if (amount) {
+                    let position = amount.indexOf('.')
+                    num = amount.concat('0'.repeat(vals[1]))
+                    if (position >= 0) {
+                        let l = amount.slice(0, position)
+                        let r = amount.slice(position + 1).padEnd(vals[1]).slice(0, vals[1])
+                        num = l + r
+                    }
+                }
+                num = new web3.utils.BN(num)
+                let allowance = new web3.utils.BN(vals[2])
+
+                if (allowance.cmp(num) == -1) {
+                    $('.content .cmd_out:last').empty()
+                    $(`<span>not enough allowance. try to type <b>set-allowance-for-vault-by-symbol-without-decimals ${cmd[1]}</b></span>`).appendTo('.content .cmd_out:last')
+                    $ptty.get_terminal('.prompt').show()
+                    $ptty.get_terminal('.prompt').find('.input').focus()
+                    return
+                }
+
+                vault.methods.deposit(num).send({ from: flamincome.__accounts__[0] })
+                    .on('transactionHash', function (hash) {
+                        $('.content .cmd_out:last').empty()
+                        $(`<span>${hash}</span>`).appendTo('.content .cmd_out:last')
+                    })
+                    .on('receipt', function (receipt) {
+                        $('.content .cmd_out:last').empty()
+                        // FIX
+                        $(`<span>${JSON.stringify(receipt)}</span>`).appendTo('.content .cmd_out:last')
+                        $ptty.get_terminal('.prompt').show()
+                        $ptty.get_terminal('.prompt').find('.input').focus()
+                        return
+                    })
+                    .on('error', function (err) {
+                        window.x = err
+                        $('.content .cmd_out:last').empty()
+                        $(`<span>${err.message}</span>`).appendTo('.content .cmd_out:last')
+                        $ptty.get_terminal('.prompt').show()
+                        $ptty.get_terminal('.prompt').find('.input').focus()
+                        return
+                    });
+            })
+            return {
+                out: '...',
+            }
+        },
+        options: [1, 2],
+        help: 'deposit erc20 token to mint ftoken'
+    });
+    $ptty.register('command', {
+        name: 'set-allowance-for-vault-by-symbol-without-decimals',
+        method: function (cmd) {
+            if (!flamincome.__accounts__) {
+                return {
+                    out: '<b>connect-wallet</b> first',
+                }
+            }
+            if (!cmd[1]) {
+                return {
+                    out: 'Usage: set-allowance-for-vault-by-symbol-without-decimals &lt;SYMBOL&gt; [AMOUNT]',
+                }
+            }
+            if (!cmd[2]) {
+                cmd[2] = new web3.utils.BN(2).pow(new web3.utils.BN(256)).subn(1)
+            }
+            let vault = flamincome.__registry__[`VaultBaseline${cmd[1]}`]
+            if (!vault) {
+                return {
+                    out: `the vault of ${cmd[1]} not found in the registry`,
+                }
+            }
+            let erc20 = flamincome.__registry__[`ERC20${cmd[1]}`]
+            if (!erc20) {
+                return {
+                    out: `the erc20 token of ${cmd[1]} not found in the registry`,
+                }
+            }
+            $ptty.get_terminal('.prompt').hide()
+            vault = new web3.eth.Contract(flamincome.__abi__.vault_baseline, vault)
+            erc20 = new web3.eth.Contract(flamincome.__abi__.erc20, erc20)
+            let allowance = erc20.methods.allowance(flamincome.__accounts__[0], vault._address).call()
+            Promise.all([allowance]).then(vals => {
+                let num = new web3.utils.BN(vals[0])
+
+                if (num > 0) {
+                    $('.content .cmd_out:last').empty()
+                    $(`<span>try to type <b>reset-allowance-for-vault-by-symbol ${cmd[1]}</b> first</span>`).appendTo('.content .cmd_out:last')
+                    $ptty.get_terminal('.prompt').show()
+                    $ptty.get_terminal('.prompt').find('.input').focus()
+                    return
+                }
+
+                erc20.methods.approve(vault._address, cmd[2]).send({ from: flamincome.__accounts__[0] })
+                    .on('transactionHash', function (hash) {
+                        $('.content .cmd_out:last').empty()
+                        $(`<span>${hash}</span>`).appendTo('.content .cmd_out:last')
+                    })
+                    .on('receipt', function (receipt) {
+                        $('.content .cmd_out:last').empty()
+                        // FIX
+                        $(`<span>${JSON.stringify(receipt)}</span>`).appendTo('.content .cmd_out:last')
+                        $ptty.get_terminal('.prompt').show()
+                        $ptty.get_terminal('.prompt').find('.input').focus()
+                        return
+                    })
+                    .on('error', function (err) {
+                        window.x = err
+                        $('.content .cmd_out:last').empty()
+                        $(`<span>${err.message}</span>`).appendTo('.content .cmd_out:last')
+                        $ptty.get_terminal('.prompt').show()
+                        $ptty.get_terminal('.prompt').find('.input').focus()
+                        return
+                    });
+            })
+            return {
+                out: '...',
+            }
+        },
+        options: [1, 2],
+        help: 'set erc20 token allowance'
+    });
+    $ptty.register('command', {
+        name: 'reset-allowance-for-vault-by-symbol',
+        method: function (cmd) {
+            if (!flamincome.__accounts__) {
+                return {
+                    out: '<b>connect-wallet</b> first',
+                }
+            }
+            if (!cmd[1]) {
+                return {
+                    out: 'Usage: reset-allowance-for-vault-by-symbol &lt;SYMBOL&gt;',
+                }
+            }
+            let vault = flamincome.__registry__[`VaultBaseline${cmd[1]}`]
+            if (!vault) {
+                return {
+                    out: `the vault of ${cmd[1]} not found in the registry`,
+                }
+            }
+            let erc20 = flamincome.__registry__[`ERC20${cmd[1]}`]
+            if (!erc20) {
+                return {
+                    out: `the erc20 token of ${cmd[1]} not found in the registry`,
+                }
+            }
+            $ptty.get_terminal('.prompt').hide()
+            vault = new web3.eth.Contract(flamincome.__abi__.vault_baseline, vault)
+            erc20 = new web3.eth.Contract(flamincome.__abi__.erc20, erc20)
+            let allowance = erc20.methods.allowance(flamincome.__accounts__[0], vault._address).call()
+            Promise.all([allowance]).then(vals => {
+                let num = new web3.utils.BN(vals[0])
+
+                if (num == 0) {
+                    $('.content .cmd_out:last').empty()
+                    $(`<span>current allowance is already 0</span>`).appendTo('.content .cmd_out:last')
+                    $ptty.get_terminal('.prompt').show()
+                    $ptty.get_terminal('.prompt').find('.input').focus()
+                    return
+                }
+
+                erc20.methods.approve(vault._address, 0).send({ from: flamincome.__accounts__[0] })
+                    .on('transactionHash', function (hash) {
+                        $('.content .cmd_out:last').empty()
+                        $(`<span>${hash}</span>`).appendTo('.content .cmd_out:last')
+                    })
+                    .on('receipt', function (receipt) {
+                        $('.content .cmd_out:last').empty()
+                        // FIX
+                        $(`<span>${JSON.stringify(receipt)}</span>`).appendTo('.content .cmd_out:last')
+                        $ptty.get_terminal('.prompt').show()
+                        $ptty.get_terminal('.prompt').find('.input').focus()
+                        return
+                    })
+                    .on('error', function (err) {
+                        window.x = err
+                        $('.content .cmd_out:last').empty()
+                        $(`<span>${err.message}</span>`).appendTo('.content .cmd_out:last')
+                        $ptty.get_terminal('.prompt').show()
+                        $ptty.get_terminal('.prompt').find('.input').focus()
+                        return
+                    });
+            })
+            return {
+                out: '...',
+            }
+        },
+        options: [1],
+        help: 'reset erc20 token allowance to 0'
     });
 });
