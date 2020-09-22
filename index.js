@@ -435,8 +435,6 @@ $(document).ready(function () {
                 flamincome.__display__(err.message)
                 flamincome.__done__()
             })
-            flamincome.__display__('coming soon ...')
-            flamincome.__done__()
         })
     })
 });
