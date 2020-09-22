@@ -375,8 +375,8 @@ $(document).ready(function () {
             let vault = flamincome.__get_vault_by_symbol__(cmd[1])
             let erc20 = flamincome.__get_erc20_by_symbol__(cmd[1])
             let amount = cmd[2]
-            // flamincome.__display__('coming soon ...')
-            // flamincome.__done__()
+            flamincome.__display__('coming soon ...')
+            flamincome.__done__()
         })
     })
 });
