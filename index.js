@@ -22,8 +22,14 @@ let flamincome = {
             console.log(err)
             setTimeout(flamincome.__init__, 1000)
         })
-        fetch('/assets/registry.json').then(resp => resp.text()).then(text => {
-            flamincome.__registry__ = JSON.parse(text)
+        fetch('/assets/reg.erc20.json').then(resp => resp.text()).then(text => {
+            flamincome.__registry__.erc20 = JSON.parse(text)
+        }).catch(err => {
+            console.log(err)
+            setTimeout(flamincome.__init__, 1000)
+        })
+        fetch('/assets/reg.vault.json').then(resp => resp.text()).then(text => {
+            flamincome.__registry__.vault = JSON.parse(text)
         }).catch(err => {
             console.log(err)
             setTimeout(flamincome.__init__, 1000)
@@ -31,7 +37,7 @@ let flamincome = {
     },
     __ptty__: null,
     __abi__: {},
-    __registry__: null,
+    __registry__: {},
     __logo__: '',
     __account__: null,
     __speak__: function (item) {
@@ -132,14 +138,14 @@ let flamincome = {
         }
     },
     __get_vault_by_symbol__: function (symbol) {
-        let vault = flamincome.__registry__[`VaultBaseline${symbol}`]
+        let vault = flamincome.__registry__.vault[symbol]
         if (!vault) {
             throw { message: `cannout find registry '${symbol}'` }
         }
         return new web3.eth.Contract(flamincome.__abi__.vault_baseline, vault)
     },
     __get_erc20_by_symbol__: function (symbol) {
-        let erc20 = flamincome.__registry__[`ERC20${symbol}`]
+        let erc20 = flamincome.__registry__.erc20[symbol]
         if (!erc20) {
             throw { message: `cannout find registry '${symbol}'` }
         }
@@ -366,8 +372,11 @@ $(document).ready(function () {
     flamincome.__register__('withdraw-token-from-vault', 'burn ftoken to withdraw token', cmd => {
         flamincome.__before__(() => {
             flamincome.__check_connection__()
-            flamincome.__display__('coming soon ...')
-            flamincome.__done__()
+            let vault = flamincome.__get_vault_by_symbol__(cmd[1])
+            let erc20 = flamincome.__get_erc20_by_symbol__(cmd[1])
+            let amount = cmd[2]
+            // flamincome.__display__('coming soon ...')
+            // flamincome.__done__()
         })
     })
 });
