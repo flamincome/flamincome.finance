@@ -76,9 +76,8 @@ let flamincome = {
     },
     __done__: function () {
         flamincome.__ptty__.get_terminal('.prompt').show()
+        flamincome.__ptty__.echo()
         flamincome.__ptty__.get_terminal('.prompt').find('.input').focus()
-        let terminal = document.getElementById('terminal')
-        terminal.scrollTop = terminal.scrollHeight
     },
     __before__: function (f) {
         flamincome.__ptty__.get_terminal('.prompt').hide()
@@ -122,14 +121,20 @@ let flamincome = {
         flamincome.__ptty__.register('command', {
             name: n,
             method: function (cmd) {
-                return { out: '...' }
+                cmd.out = '...'
+                return cmd
             },
             options: [0, 1, 2, 3, 4],
             help: h,
         });
         flamincome.__ptty__.register('callback', {
             name: n,
-            method: f,
+            method: function (cmd) {
+                if (cmd.last != undefined || cmd.in != undefined) {
+                    return
+                }
+                f(cmd)
+            },
         });
     },
     __check_connection__: function () {
