@@ -71,6 +71,8 @@ let flamincome = {
     __done__: function () {
         flamincome.__ptty__.get_terminal('.prompt').show()
         flamincome.__ptty__.get_terminal('.prompt').find('.input').focus()
+        let terminal = document.getElementById('terminal')
+        terminal.scrollTop = terminal.scrollHeight
     },
     __before__: function (f) {
         flamincome.__ptty__.get_terminal('.prompt').hide()
