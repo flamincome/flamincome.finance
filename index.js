@@ -612,37 +612,29 @@ $(document).ready(function () {
         name: 'ConnectWallet',
         method: function (cmd) {
             $ptty.get_terminal('.prompt').hide()
-            let out = document.createElement('span')
-            out.id = Math.random().toFixed(50).substr(2)
             window.ethereum.send('eth_requestAccounts').then(v => {
-                $(`#${out.id}`).text('connected')
+                $('.content .cmd_out:last').empty()
+                $('<span>connected</span>').appendTo('.content .cmd_out:last')
                 flamincome.__accounts__ = v.result
                 $ptty.get_terminal('.prompt').show()
             }).catch(v => {
-                $(`#${out.id}`).text('failed')
+                $('.content .cmd_out:last').empty()
+                $('<span>failed</span>').appendTo('.content .cmd_out:last')
                 $ptty.get_terminal('.prompt').show()
             })
             return {
-                out: out.outerHTML,
+                out: '...',
             }
         },
         help: 'connect wallet'
     });
     $ptty.register('command', {
-        name: 'ListRegistries',
+        name: 'ListRegistry',
         method: function (cmd) {
-            // $ptty.get_terminal('.prompt').hide()
-            // let out = document.createElement('span')
-            // out.id = Math.random().toFixed(50).substr(2)
-            // window.ethereum.send('eth_requestAccounts').then(v => {
-            //     $(`#${out.id}`).text('connected')
-            //     flamincome.__accounts__ = v.result
-            //     $ptty.get_terminal('.prompt').show()
-            // }).catch(v => {
-            //     $(`#${out.id}`).text('failed')
-            //     $ptty.get_terminal('.prompt').show()
-            // })
-            flamincome.__registry__
+            let filter = ''
+            if (cmd[1]) {
+                filter = cmd[1]
+            }
             let out = document.createElement('table')
             let head = document.createElement('tr')
             let name = document.createElement('th')
@@ -650,24 +642,18 @@ $(document).ready(function () {
             head.appendChild(name)
             head.appendChild(address)
             out.appendChild(head)
-            // out.style.border = '1px solid rgba(255,255,255,0.15)'
-            // name.style.color = 'white'
-            // name.style.border = '1px solid rgba(255,255,255,0.15)'
-            // address.style.color = 'white'
-            // address.style.border = '1px solid rgba(255,255,255,0.15)'
             name.innerText = 'contract name'
             address.innerText = 'contract address'
             for (var k in flamincome.__registry__) {
+                if (!k.startsWith(filter)) {
+                    continue
+                }
                 let row = document.createElement('tr')
                 let name = document.createElement('th')
                 let address = document.createElement('th')
                 row.appendChild(name)
                 row.appendChild(address)
                 out.appendChild(row)
-                // name.style.color = 'white'
-                // name.style.border = '1px solid rgba(255,255,255,0.15)'
-                // address.style.color = 'white'
-                // address.style.border = '1px solid rgba(255,255,255,0.15)'
                 name.innerText = k
                 address.innerText = flamincome.__registry__[k]
             }
@@ -675,6 +661,47 @@ $(document).ready(function () {
                 out: out.outerHTML,
             }
         },
-        help: 'connect wallet'
+        options: [1],
+        help: 'list registry'
+    });
+    $ptty.register('command', {
+        name: 'GetBalanceOfFToken',
+        method: function (cmd) {
+            if (!flamincome.__accounts__) {
+                return {
+                    out: '<b>ConnectWallet</b> first',
+                }
+            }
+            if (!cmd[1]) {
+                return {
+                    out: 'Usage: GetBalanceOfFToken &lt;SYMBOL&gt;',
+                }
+            }
+            let vault = flamincome.__registry__[`VaultBaseline${cmd[1]}`]
+            if (!vault) {
+                return {
+                    out: `the vault of ${cmd[1]} not found in the registry`,
+                }
+            }
+            $ptty.get_terminal('.prompt').hide()
+            vault = new web3.eth.Contract(flamincome.__abi__.vault_baseline, vault)
+            let balanceOf = vault.methods.balanceOf(flamincome.__accounts__[0]).call()
+            let decimals = vault.methods.decimals().call()
+            Promise.all([balanceOf, decimals]).then(vals => {
+                let balanceOf = vals[0]
+                let decimals = parseInt(vals[1])
+                balanceOf = balanceOf.padStart(decimals,'0')
+                let position = balanceOf.length - decimals
+                var output = [balanceOf.slice(0, position), balanceOf.slice(position)].join('.');
+                $('.content .cmd_out:last').empty()
+                $(`<span>${output}</span>`).appendTo('.content .cmd_out:last')
+                $ptty.get_terminal('.prompt').show()
+            })
+            return {
+                out: '...',
+            }
+        },
+        options: [1],
+        help: 'list registries: `ListRegistries [filter]`'
     });
 });
