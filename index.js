@@ -77,6 +77,7 @@ let flamincome = {
     __done__: function () {
         flamincome.__ptty__.get_terminal('.prompt').show()
         flamincome.__ptty__.get_terminal('.prompt').find('.input').focus()
+        flamincome.__ptty__.echo('123')
         let terminal = document.getElementById('terminal')
         terminal.scrollTop = terminal.scrollHeight
     },
@@ -349,16 +350,17 @@ $(document).ready(function () {
                                 )
                             }
                         )
-                    } else {
-                        flamincome.__transaction__(
-                            erc20.methods.approve(vault._address, new web3.utils.BN(2).pow(new web3.utils.BN(256)).subn(1)).send({ from: flamincome.__account__ }),
-                            function () {
-                                flamincome.__transaction__(
-                                    vault.methods.deposit(num).send({ from: flamincome.__account__ })
-                                )
-                            }
-                        )
+                        return
                     }
+                    flamincome.__transaction__(
+                        erc20.methods.approve(vault._address, new web3.utils.BN(2).pow(new web3.utils.BN(256)).subn(1)).send({ from: flamincome.__account__ }),
+                        function () {
+                            flamincome.__transaction__(
+                                vault.methods.deposit(num).send({ from: flamincome.__account__ })
+                            )
+                        }
+                    )
+                    return
                 }
                 flamincome.__transaction__(
                     vault.methods.deposit(num).send({ from: flamincome.__account__ })
