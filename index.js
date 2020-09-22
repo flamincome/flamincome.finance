@@ -11,28 +11,29 @@ let flamincome = {
             setTimeout(flamincome.__init__, 1000)
         })
         fetch('/assets/abi.vault_baseline.json').then(resp => resp.text()).then(text => {
-            flamincome.__abi__.vault_baseline = text
+            flamincome.__abi__.vault_baseline = JSON.parse(text)
         }).catch(err => {
             console.log(err)
             setTimeout(flamincome.__init__, 1000)
         })
         fetch('/assets/abi.erc20.json').then(resp => resp.text()).then(text => {
-            flamincome.__abi__.erc20 = text
+            flamincome.__abi__.erc20 = JSON.parse(text)
         }).catch(err => {
             console.log(err)
             setTimeout(flamincome.__init__, 1000)
         })
         fetch('/assets/registry.json').then(resp => resp.text()).then(text => {
-            flamincome.__registry__ = text
+            flamincome.__registry__ = JSON.parse(text)
         }).catch(err => {
             console.log(err)
             setTimeout(flamincome.__init__, 1000)
         })
     },
+    __ptty__: null,
     __abi__: {},
     __registry__: null,
     __logo__: '',
-    __accounts__: null,
+    __account__: null,
     __speak__: function (item) {
         let root = document.createElement('div')
         let logo = document.createElement('pre')
@@ -61,6 +62,40 @@ let flamincome = {
         }
         return root
     },
+    __display__: function (data) {
+        let out = document.createElement('div')
+        out.innerHTML = data
+        $('.content .cmd_out:last').empty()
+        $(out.outerHTML).appendTo('.content .cmd_out:last')
+    },
+    __done__: function () {
+        flamincome.__ptty__.get_terminal('.prompt').show()
+        flamincome.__ptty__.get_terminal('.prompt').find('.input').focus()
+    },
+    __before__: function (f) {
+        flamincome.__ptty__.get_terminal('.prompt').hide()
+        if (flamincome.__registry__ == null) {
+            flamincome.__display__('loading registry ...')
+            setTimeout(() => flamincome.__before__(f), 1000)
+            return
+        }
+        if (flamincome.__abi__.erc20 == null) {
+            flamincome.__display__('loading abi.erc20 ...')
+            setTimeout(() => flamincome.__before__(f), 1000)
+            return
+        }
+        if (flamincome.__abi__.vault_baseline == null) {
+            flamincome.__display__('loading abi.vault_baseline ...')
+            setTimeout(() => flamincome.__before__(f), 1000)
+            return
+        }
+        try {
+            f()
+        } catch (err) {
+            flamincome.__display__(err.message)
+            flamincome.__done__()
+        }
+    },
     __welcome__: function () {
         let welcome = document.createElement('div')
         let welcome_header = document.createElement('p')
@@ -75,47 +110,78 @@ let flamincome = {
         welcome.appendChild(welcome_footer)
         return welcome
     },
-    ConnectWallet: function () {
-        window.ethereum.enable()
+    __register__: function (n, h, f) {
+        flamincome.__ptty__.register('command', {
+            name: n,
+            method: function (cmd) {
+                return { out: '...' }
+            },
+            options: [0, 1, 2, 3, 4],
+            help: h,
+        });
+        flamincome.__ptty__.register('callback', {
+            name: n,
+            method: f,
+        });
+    },
+    __check_connection__: function () {
+        if (!flamincome.__account__) {
+            throw { message: 'please <b>connect-wallet</b> first' }
+        }
+    },
+    __get_vault_by_symbol__: function (symbol) {
+        let vault = flamincome.__registry__[`VaultBaseline${symbol}`]
+        if (!vault) {
+            throw { message: `cannout find registry '${symbol}'` }
+        }
+        return new web3.eth.Contract(flamincome.__abi__.vault_baseline, vault)
+    },
+    __get_erc20_by_symbol__: function (symbol) {
+        let erc20 = flamincome.__registry__[`ERC20${symbol}`]
+        if (!erc20) {
+            throw { message: `cannout find registry '${symbol}'` }
+        }
+        return new web3.eth.Contract(flamincome.__abi__.erc20, erc20)
+    },
+    __transaction__: function (tx, next) {
+        tx.on('transactionHash', function (hash) {
+            flamincome.__display__(`waiting for confirming ...<br>${hash}`)
+        }).on('receipt', function (receipt) {
+            flamincome.__display__(JSON.stringify(receipt))
+            if (next) {
+                next()
+            } else {
+                flamincome.__done__()
+            }
+        }).on('error', function (err) {
+            flamincome.__display__(err.message)
+            flamincome.__done__()
+        })
     }
 }
 
 $(document).ready(function () {
     flamincome.__init__()
-    let $ptty = $('#terminal').Ptty({
+    flamincome.__ptty__ = $('#terminal').Ptty({
         i18n: {
             welcome: flamincome.__welcome__().outerHTML,
         }
     });
-    $ptty.register('command', {
-        name: 'connect-wallet',
-        method: function (cmd) {
-            $ptty.get_terminal('.prompt').hide()
+    flamincome.__register__('connect-wallet', 'connect wallet', cmd => {
+        flamincome.__before__(() => {
             window.ethereum.send('eth_requestAccounts').then(v => {
-                $('.content .cmd_out:last').empty()
-                $('<span>connected</span>').appendTo('.content .cmd_out:last')
-                flamincome.__accounts__ = v.result
-                $ptty.get_terminal('.prompt').show()
-                $ptty.get_terminal('.prompt').find('.input').focus()
+                flamincome.__account__ = v.result[0]
+                flamincome.__display__('connected')
+                flamincome.__done__()
             }).catch(v => {
-                $('.content .cmd_out:last').empty()
-                $('<span>failed</span>').appendTo('.content .cmd_out:last')
-                $ptty.get_terminal('.prompt').show()
-                $ptty.get_terminal('.prompt').find('.input').focus()
+                flamincome.__display__(v.message)
+                flamincome.__done__()
             })
-            return {
-                out: '...',
-            }
-        },
-        help: 'connect wallet'
-    });
-    $ptty.register('command', {
-        name: 'list-registry',
-        method: function (cmd) {
+        })
+    })
+    flamincome.__register__('list-registry', 'list registry', cmd => {
+        flamincome.__before__(() => {
             let filter = ''
-            if (cmd[1]) {
-                filter = cmd[1]
-            }
             let out = document.createElement('table')
             let head = document.createElement('tr')
             let name = document.createElement('th')
@@ -125,6 +191,9 @@ $(document).ready(function () {
             out.appendChild(head)
             name.innerText = 'contract name'
             address.innerText = 'contract address'
+            if (cmd[1]) {
+                filter = cmd[1]
+            }
             for (var k in flamincome.__registry__) {
                 if (!k.startsWith(filter)) {
                     continue
@@ -138,38 +207,19 @@ $(document).ready(function () {
                 name.innerText = k
                 address.innerText = flamincome.__registry__[k]
             }
-            return {
-                out: out.outerHTML,
+            flamincome.__display__(out.outerHTML)
+            flamincome.__done__()
+        })
+    })
+    flamincome.__register__('get-balance-of-ftoken-by-symbol', 'get flamincomed token balance', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let vault = flamincome.__get_vault_by_symbol__(cmd[1])
+            let account = cmd[2]
+            if (!account) {
+                account = flamincome.__account__
             }
-        },
-        options: [1],
-        help: 'list registry'
-    });
-    $ptty.register('command', {
-        name: 'get-balance-of-ftoken-by-symbol',
-        method: function (cmd) {
-            if (!flamincome.__accounts__) {
-                return {
-                    out: '<b>connect-wallet</b> first',
-                }
-            }
-            if (!cmd[1]) {
-                return {
-                    out: 'Usage: get-balance-of-ftoken-by-symbol &lt;SYMBOL&gt; [ACCOUNT_ADDRESS]',
-                }
-            }
-            if (!cmd[2]) {
-                cmd[2] = flamincome.__accounts__[0]
-            }
-            let vault = flamincome.__registry__[`VaultBaseline${cmd[1]}`]
-            if (!vault) {
-                return {
-                    out: `the vault of ${cmd[1]} not found in the registry`,
-                }
-            }
-            $ptty.get_terminal('.prompt').hide()
-            vault = new web3.eth.Contract(flamincome.__abi__.vault_baseline, vault)
-            let balanceOf = vault.methods.balanceOf(flamincome.__accounts__[0]).call()
+            let balanceOf = vault.methods.balanceOf(account).call()
             let decimals = vault.methods.decimals().call()
             Promise.all([balanceOf, decimals]).then(vals => {
                 let balanceOf = vals[0]
@@ -177,87 +227,90 @@ $(document).ready(function () {
                 balanceOf = balanceOf.padStart(decimals, '0')
                 let position = balanceOf.length - decimals
                 var output = [balanceOf.slice(0, position), balanceOf.slice(position)].join('.');
-                $('.content .cmd_out:last').empty()
-                $(`<span>${output}</span>`).appendTo('.content .cmd_out:last')
-                $ptty.get_terminal('.prompt').show()
-                $ptty.get_terminal('.prompt').find('.input').focus()
+                flamincome.__display__(output)
+                flamincome.__done__()
+            }).catch(err => {
+                flamincome.__display__(err.message)
+                flamincome.__done__()
             })
-            return {
-                out: '...',
-            }
-        },
-        options: [1, 2],
-        help: 'get flamincomed token balance'
-    });
-    $ptty.register('command', {
-        name: 'get-balance-of-erc20-by-address',
-        method: function (cmd) {
-            if (!flamincome.__accounts__) {
-                return {
-                    out: '<b>connect-wallet</b> first',
-                }
-            }
-            if (!cmd[1]) {
-                return {
-                    out: 'Usage: get-balance-of-erc20-by-address &lt;TOKEN_ADDRESS&gt; [ADDRESS]',
-                }
-            }
-            if (!cmd[2]) {
-                cmd[2] = flamincome.__accounts__[0]
-            }
-            $ptty.get_terminal('.prompt').hide()
-            let vault = new web3.eth.Contract(flamincome.__abi__.vault_baseline, cmd[1])
-            let balanceOf = vault.methods.balanceOf(cmd[2]).call()
+        })
+    })
+    flamincome.__register__('get-value-of-ftoken-by-symbol', 'get total value of flamincomed token', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let vault = flamincome.__get_vault_by_symbol__(cmd[1])
+            let balances = vault.methods.balance().call()
             let decimals = vault.methods.decimals().call()
+            Promise.all([balances, decimals]).then(vals => {
+                let balances = vals[0]
+                let decimals = parseInt(vals[1])
+                balances = balances.padStart(decimals, '0')
+                let position = balances.length - decimals
+                var output = [balances.slice(0, position), balances.slice(position)].join('.');
+                flamincome.__display__(output)
+                flamincome.__done__()
+            }).catch(err => {
+                flamincome.__display__(err.message)
+                flamincome.__done__()
+            })
+        })
+    })
+    flamincome.__register__('get-balance-of-erc20-by-symbol', 'get erc20 balance', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let erc20 = flamincome.__get_erc20_by_symbol__(cmd[1])
+            let account = cmd[2]
+            if (!account) {
+                account = flamincome.__account__
+            }
+            let balanceOf = erc20.methods.balanceOf(account).call()
+            let decimals = erc20.methods.decimals().call()
             Promise.all([balanceOf, decimals]).then(vals => {
                 let balanceOf = vals[0]
                 let decimals = parseInt(vals[1])
                 balanceOf = balanceOf.padStart(decimals, '0')
                 let position = balanceOf.length - decimals
                 var output = [balanceOf.slice(0, position), balanceOf.slice(position)].join('.');
-                $('.content .cmd_out:last').empty()
-                $(`<span>${output}</span>`).appendTo('.content .cmd_out:last')
-                $ptty.get_terminal('.prompt').show()
-                $ptty.get_terminal('.prompt').find('.input').focus()
+                flamincome.__display__(output)
+                flamincome.__done__()
+            }).catch(err => {
+                flamincome.__display__(err.message)
+                flamincome.__done__()
             })
-            return {
-                out: '...',
+        })
+    })
+    flamincome.__register__('get-balance-of-erc20-by-address', 'get erc20 balance', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let erc20 = new web3.eth.Contract(flamincome.__abi__.erc20, cmd[1])
+            let account = cmd[2]
+            if (!account) {
+                account = flamincome.__account__
             }
-        },
-        options: [1, 2],
-        help: 'get erc20 token balance'
-    });
-    $ptty.register('command', {
-        name: 'deposit-token-to-vault',
-        method: function (cmd) {
-            if (!flamincome.__accounts__) {
-                return {
-                    out: '<b>connect-wallet</b> first',
-                }
-            }
-            if (!cmd[1]) {
-                return {
-                    out: 'Usage: deposit-token-to-vault &lt;SYMBOL&gt; [AMOUNT]',
-                }
-            }
+            let balanceOf = erc20.methods.balanceOf(account).call()
+            let decimals = erc20.methods.decimals().call()
+            Promise.all([balanceOf, decimals]).then(vals => {
+                let balanceOf = vals[0]
+                let decimals = parseInt(vals[1])
+                balanceOf = balanceOf.padStart(decimals, '0')
+                let position = balanceOf.length - decimals
+                var output = [balanceOf.slice(0, position), balanceOf.slice(position)].join('.');
+                flamincome.__display__(output)
+                flamincome.__done__()
+            }).catch(err => {
+                flamincome.__display__(err.message)
+                flamincome.__done__()
+            })
+        })
+    })
+    flamincome.__register__('deposit-token-to-vault', 'deposit token to mint ftoken', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let vault = flamincome.__get_vault_by_symbol__(cmd[1])
+            let erc20 = flamincome.__get_erc20_by_symbol__(cmd[1])
             let amount = cmd[2]
-            let vault = flamincome.__registry__[`VaultBaseline${cmd[1]}`]
-            if (!vault) {
-                return {
-                    out: `the vault of ${cmd[1]} not found in the registry`,
-                }
-            }
-            let erc20 = flamincome.__registry__[`ERC20${cmd[1]}`]
-            if (!erc20) {
-                return {
-                    out: `the erc20 token of ${cmd[1]} not found in the registry`,
-                }
-            }
-            $ptty.get_terminal('.prompt').hide()
-            vault = new web3.eth.Contract(flamincome.__abi__.vault_baseline, vault)
-            erc20 = new web3.eth.Contract(flamincome.__abi__.erc20, erc20)
-            let allowance = erc20.methods.allowance(flamincome.__accounts__[0], vault._address).call()
-            let balanceOf = erc20.methods.balanceOf(flamincome.__accounts__[0]).call()
+            let allowance = erc20.methods.allowance(flamincome.__account__, vault._address).call()
+            let balanceOf = erc20.methods.balanceOf(flamincome.__account__).call()
             let decimals = erc20.methods.decimals().call()
             Promise.all([balanceOf, decimals, allowance]).then(vals => {
                 let num = vals[0]
@@ -274,181 +327,38 @@ $(document).ready(function () {
                 let allowance = new web3.utils.BN(vals[2])
 
                 if (allowance.cmp(num) == -1) {
-                    $('.content .cmd_out:last').empty()
-                    $(`<span>not enough allowance. try to type <b>set-allowance-for-vault-by-symbol-without-decimals ${cmd[1]}</b></span>`).appendTo('.content .cmd_out:last')
-                    $ptty.get_terminal('.prompt').show()
-                    $ptty.get_terminal('.prompt').find('.input').focus()
-                    return
+                    if (allowance > 0) {
+                        flamincome.__transaction__(
+                            erc20.methods.approve(vault._address, 0).send({ from: flamincome.__account__ }),
+                            function () {
+                                flamincome.__transaction__(
+                                    erc20.methods.approve(vault._address, new web3.utils.BN(2).pow(new web3.utils.BN(256)).subn(1)).send({ from: flamincome.__account__ }),
+                                    function () {
+                                        flamincome.__transaction__(
+                                            vault.methods.deposit(num).send({ from: flamincome.__account__ })
+                                        )
+                                    }
+                                )
+                            }
+                        )
+                    } else {
+                        flamincome.__transaction__(
+                            erc20.methods.approve(vault._address, new web3.utils.BN(2).pow(new web3.utils.BN(256)).subn(1)).send({ from: flamincome.__account__ }),
+                            function () {
+                                flamincome.__transaction__(
+                                    vault.methods.deposit(num).send({ from: flamincome.__account__ })
+                                )
+                            }
+                        )
+                    }
                 }
-
-                vault.methods.deposit(num).send({ from: flamincome.__accounts__[0] })
-                    .on('transactionHash', function (hash) {
-                        $('.content .cmd_out:last').empty()
-                        $(`<span>${hash}</span>`).appendTo('.content .cmd_out:last')
-                    })
-                    .on('receipt', function (receipt) {
-                        $('.content .cmd_out:last').empty()
-                        // FIX
-                        $(`<span>${JSON.stringify(receipt)}</span>`).appendTo('.content .cmd_out:last')
-                        $ptty.get_terminal('.prompt').show()
-                        $ptty.get_terminal('.prompt').find('.input').focus()
-                        return
-                    })
-                    .on('error', function (err) {
-                        window.x = err
-                        $('.content .cmd_out:last').empty()
-                        $(`<span>${err.message}</span>`).appendTo('.content .cmd_out:last')
-                        $ptty.get_terminal('.prompt').show()
-                        $ptty.get_terminal('.prompt').find('.input').focus()
-                        return
-                    });
+                flamincome.__transaction__(
+                    vault.methods.deposit(num).send({ from: flamincome.__account__ })
+                )
+            }).catch(err => {
+                flamincome.__display__(err.message)
+                flamincome.__done__()
             })
-            return {
-                out: '...',
-            }
-        },
-        options: [1, 2],
-        help: 'deposit erc20 token to mint ftoken'
-    });
-    $ptty.register('command', {
-        name: 'set-allowance-for-vault-by-symbol-without-decimals',
-        method: function (cmd) {
-            if (!flamincome.__accounts__) {
-                return {
-                    out: '<b>connect-wallet</b> first',
-                }
-            }
-            if (!cmd[1]) {
-                return {
-                    out: 'Usage: set-allowance-for-vault-by-symbol-without-decimals &lt;SYMBOL&gt; [AMOUNT]',
-                }
-            }
-            if (!cmd[2]) {
-                cmd[2] = new web3.utils.BN(2).pow(new web3.utils.BN(256)).subn(1)
-            }
-            let vault = flamincome.__registry__[`VaultBaseline${cmd[1]}`]
-            if (!vault) {
-                return {
-                    out: `the vault of ${cmd[1]} not found in the registry`,
-                }
-            }
-            let erc20 = flamincome.__registry__[`ERC20${cmd[1]}`]
-            if (!erc20) {
-                return {
-                    out: `the erc20 token of ${cmd[1]} not found in the registry`,
-                }
-            }
-            $ptty.get_terminal('.prompt').hide()
-            vault = new web3.eth.Contract(flamincome.__abi__.vault_baseline, vault)
-            erc20 = new web3.eth.Contract(flamincome.__abi__.erc20, erc20)
-            let allowance = erc20.methods.allowance(flamincome.__accounts__[0], vault._address).call()
-            Promise.all([allowance]).then(vals => {
-                let num = new web3.utils.BN(vals[0])
-
-                if (num > 0) {
-                    $('.content .cmd_out:last').empty()
-                    $(`<span>try to type <b>reset-allowance-for-vault-by-symbol ${cmd[1]}</b> first</span>`).appendTo('.content .cmd_out:last')
-                    $ptty.get_terminal('.prompt').show()
-                    $ptty.get_terminal('.prompt').find('.input').focus()
-                    return
-                }
-
-                erc20.methods.approve(vault._address, cmd[2]).send({ from: flamincome.__accounts__[0] })
-                    .on('transactionHash', function (hash) {
-                        $('.content .cmd_out:last').empty()
-                        $(`<span>${hash}</span>`).appendTo('.content .cmd_out:last')
-                    })
-                    .on('receipt', function (receipt) {
-                        $('.content .cmd_out:last').empty()
-                        // FIX
-                        $(`<span>${JSON.stringify(receipt)}</span>`).appendTo('.content .cmd_out:last')
-                        $ptty.get_terminal('.prompt').show()
-                        $ptty.get_terminal('.prompt').find('.input').focus()
-                        return
-                    })
-                    .on('error', function (err) {
-                        window.x = err
-                        $('.content .cmd_out:last').empty()
-                        $(`<span>${err.message}</span>`).appendTo('.content .cmd_out:last')
-                        $ptty.get_terminal('.prompt').show()
-                        $ptty.get_terminal('.prompt').find('.input').focus()
-                        return
-                    });
-            })
-            return {
-                out: '...',
-            }
-        },
-        options: [1, 2],
-        help: 'set erc20 token allowance'
-    });
-    $ptty.register('command', {
-        name: 'reset-allowance-for-vault-by-symbol',
-        method: function (cmd) {
-            if (!flamincome.__accounts__) {
-                return {
-                    out: '<b>connect-wallet</b> first',
-                }
-            }
-            if (!cmd[1]) {
-                return {
-                    out: 'Usage: reset-allowance-for-vault-by-symbol &lt;SYMBOL&gt;',
-                }
-            }
-            let vault = flamincome.__registry__[`VaultBaseline${cmd[1]}`]
-            if (!vault) {
-                return {
-                    out: `the vault of ${cmd[1]} not found in the registry`,
-                }
-            }
-            let erc20 = flamincome.__registry__[`ERC20${cmd[1]}`]
-            if (!erc20) {
-                return {
-                    out: `the erc20 token of ${cmd[1]} not found in the registry`,
-                }
-            }
-            $ptty.get_terminal('.prompt').hide()
-            vault = new web3.eth.Contract(flamincome.__abi__.vault_baseline, vault)
-            erc20 = new web3.eth.Contract(flamincome.__abi__.erc20, erc20)
-            let allowance = erc20.methods.allowance(flamincome.__accounts__[0], vault._address).call()
-            Promise.all([allowance]).then(vals => {
-                let num = new web3.utils.BN(vals[0])
-
-                if (num == 0) {
-                    $('.content .cmd_out:last').empty()
-                    $(`<span>current allowance is already 0</span>`).appendTo('.content .cmd_out:last')
-                    $ptty.get_terminal('.prompt').show()
-                    $ptty.get_terminal('.prompt').find('.input').focus()
-                    return
-                }
-
-                erc20.methods.approve(vault._address, 0).send({ from: flamincome.__accounts__[0] })
-                    .on('transactionHash', function (hash) {
-                        $('.content .cmd_out:last').empty()
-                        $(`<span>${hash}</span>`).appendTo('.content .cmd_out:last')
-                    })
-                    .on('receipt', function (receipt) {
-                        $('.content .cmd_out:last').empty()
-                        // FIX
-                        $(`<span>${JSON.stringify(receipt)}</span>`).appendTo('.content .cmd_out:last')
-                        $ptty.get_terminal('.prompt').show()
-                        $ptty.get_terminal('.prompt').find('.input').focus()
-                        return
-                    })
-                    .on('error', function (err) {
-                        window.x = err
-                        $('.content .cmd_out:last').empty()
-                        $(`<span>${err.message}</span>`).appendTo('.content .cmd_out:last')
-                        $ptty.get_terminal('.prompt').show()
-                        $ptty.get_terminal('.prompt').find('.input').focus()
-                        return
-                    });
-            })
-            return {
-                out: '...',
-            }
-        },
-        options: [1],
-        help: 'reset erc20 token allowance to 0'
-    });
+        })
+    })
 });
