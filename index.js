@@ -614,7 +614,7 @@ $(document).ready(function () {
             $ptty.get_terminal('.prompt').hide()
             window.ethereum.send('eth_requestAccounts').then(v => {
                 $('.content .cmd_out:last').empty()
-                $('<span>connected</span>').appendTo('.content .cmd_out:last')
+                $('<span>connected, click here to continue</span>').appendTo('.content .cmd_out:last')
                 flamincome.__accounts__ = v.result
                 $ptty.get_terminal('.prompt').show()
             }).catch(v => {
