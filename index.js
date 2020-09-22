@@ -614,13 +614,15 @@ $(document).ready(function () {
             $ptty.get_terminal('.prompt').hide()
             window.ethereum.send('eth_requestAccounts').then(v => {
                 $('.content .cmd_out:last').empty()
-                $('<span>connected, click here to continue</span>').appendTo('.content .cmd_out:last')
+                $('<span>connected</span>').appendTo('.content .cmd_out:last')
                 flamincome.__accounts__ = v.result
                 $ptty.get_terminal('.prompt').show()
+                $ptty.get_terminal('.prompt').find('.input').focus()
             }).catch(v => {
                 $('.content .cmd_out:last').empty()
                 $('<span>failed</span>').appendTo('.content .cmd_out:last')
                 $ptty.get_terminal('.prompt').show()
+                $ptty.get_terminal('.prompt').find('.input').focus()
             })
             return {
                 out: '...',
@@ -665,7 +667,7 @@ $(document).ready(function () {
         help: 'list registry'
     });
     $ptty.register('command', {
-        name: 'GetBalanceOfFToken',
+        name: 'GetFBalanceOfMe',
         method: function (cmd) {
             if (!flamincome.__accounts__) {
                 return {
@@ -674,7 +676,7 @@ $(document).ready(function () {
             }
             if (!cmd[1]) {
                 return {
-                    out: 'Usage: GetBalanceOfFToken &lt;SYMBOL&gt;',
+                    out: 'Usage: GetFBalanceOfMe &lt;SYMBOL&gt;',
                 }
             }
             let vault = flamincome.__registry__[`VaultBaseline${cmd[1]}`]
@@ -696,12 +698,48 @@ $(document).ready(function () {
                 $('.content .cmd_out:last').empty()
                 $(`<span>${output}</span>`).appendTo('.content .cmd_out:last')
                 $ptty.get_terminal('.prompt').show()
+                $ptty.get_terminal('.prompt').find('.input').focus()
             })
             return {
                 out: '...',
             }
         },
         options: [1],
-        help: 'list registries: `ListRegistries [filter]`'
+        help: 'get flamincomed token balance'
+    });
+    $ptty.register('command', {
+        name: 'GetERC20BalanceOfMe',
+        method: function (cmd) {
+            if (!flamincome.__accounts__) {
+                return {
+                    out: '<b>ConnectWallet</b> first',
+                }
+            }
+            if (!cmd[1]) {
+                return {
+                    out: 'Usage: GetBalanceOfMe &lt;TOKENADDR&gt;',
+                }
+            }
+            $ptty.get_terminal('.prompt').hide()
+            let vault = new web3.eth.Contract(flamincome.__abi__.vault_baseline, cmd[1])
+            let balanceOf = vault.methods.balanceOf(flamincome.__accounts__[0]).call()
+            let decimals = vault.methods.decimals().call()
+            Promise.all([balanceOf, decimals]).then(vals => {
+                let balanceOf = vals[0]
+                let decimals = parseInt(vals[1])
+                balanceOf = balanceOf.padStart(decimals,'0')
+                let position = balanceOf.length - decimals
+                var output = [balanceOf.slice(0, position), balanceOf.slice(position)].join('.');
+                $('.content .cmd_out:last').empty()
+                $(`<span>${output}</span>`).appendTo('.content .cmd_out:last')
+                $ptty.get_terminal('.prompt').show()
+                $ptty.get_terminal('.prompt').find('.input').focus()
+            })
+            return {
+                out: '...',
+            }
+        },
+        options: [1],
+        help: 'get erc20 token balance'
     });
 });
