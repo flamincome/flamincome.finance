@@ -361,4 +361,11 @@ $(document).ready(function () {
             })
         })
     })
+    flamincome.__register__('withdraw-token-from-vault', 'burn ftoken to withdraw token', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            flamincome.__display__('coming soon ...')
+            flamincome.__done__()
+        })
+    })
 });
