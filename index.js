@@ -244,7 +244,7 @@ $(document).ready(function () {
                 row.appendChild(name)
                 row.appendChild(address)
                 out.appendChild(row)
-                name.innerText = k
+                name.innerText = `f${k} (vault of ${k})`
                 address.innerText = flamincome.__registry__.vault[k]
             }
             flamincome.__display__(out.outerHTML)
