@@ -482,32 +482,32 @@ $(document).ready(function () {
             })
         })
     })
-    // flamincome.__register__('unwrap-weth-to-eth', 'unwrap WETH to ETH', cmd => {
-    //     flamincome.__before__(() => {
-    //         flamincome.__check_connection__()
-    //         let weth = flamincome.__get_weth__()
-    //         let amount = cmd[1]
-    //         let balanceOf = weth.methods.balanceOf(flamincome.__account__).call()
-    //         Promise.all([balanceOf]).then(vals => {
-    //             let num = vals[0]
-    //             if (amount) {
-    //                 let position = amount.indexOf('.')
-    //                 num = amount.concat('0'.repeat(vals[1]))
-    //                 if (position >= 0) {
-    //                     let l = amount.slice(0, position)
-    //                     let r = amount.slice(position + 1).padEnd(vals[1],'0').slice(0, vals[1])
-    //                     num = l + r
-    //                 }
-    //             }
-    //             num = new web3.utils.BN(num)
+    flamincome.__register__('unwrap-weth-to-eth', 'unwrap WETH to ETH', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let weth = flamincome.__get_weth__()
+            let amount = cmd[1]
+            let balanceOf = weth.methods.balanceOf(flamincome.__account__).call()
+            Promise.all([balanceOf]).then(vals => {
+                let num = vals[0]
+                if (amount) {
+                    let position = amount.indexOf('.')
+                    num = amount.concat('0'.repeat(vals[1]))
+                    if (position >= 0) {
+                        let l = amount.slice(0, position)
+                        let r = amount.slice(position + 1).padEnd(vals[1],'0').slice(0, vals[1])
+                        num = l + r
+                    }
+                }
+                num = new web3.utils.BN(num)
 
-    //             flamincome.__transaction__(
-    //                 weth.methods.withdraw(num).send({ from: flamincome.__account__ })
-    //             )
-    //         }).catch(err => {
-    //             flamincome.__display__(err.message)
-    //             flamincome.__done__()
-    //         })
-    //     })
-    // })
+                flamincome.__transaction__(
+                    weth.methods.withdraw(num).send({ from: flamincome.__account__ })
+                )
+            }).catch(err => {
+                flamincome.__display__(err.message)
+                flamincome.__done__()
+            })
+        })
+    })
 });
