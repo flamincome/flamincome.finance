@@ -187,7 +187,7 @@ $(document).ready(function () {
                 flamincome.__display__('connected')
                 flamincome.__done__()
             }).catch(v => {
-                flamincome.__display__(v.message)
+                flamincome.__display__(`${v.message} (maybe you need to install <a href="https://metamask.io/">metamask</a> for your browser and refresh this page)`)
                 flamincome.__done__()
             })
         })
