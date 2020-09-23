@@ -22,6 +22,12 @@ let flamincome = {
             console.log(err)
             setTimeout(flamincome.__init__, 1000)
         })
+        fetch('/assets/abi.weth.json').then(resp => resp.text()).then(text => {
+            flamincome.__abi__.weth = JSON.parse(text)
+        }).catch(err => {
+            console.log(err)
+            setTimeout(flamincome.__init__, 1000)
+        })
         fetch('/assets/reg.erc20.json').then(resp => resp.text()).then(text => {
             flamincome.__registry__.erc20 = JSON.parse(text)
         }).catch(err => {
@@ -96,6 +102,11 @@ let flamincome = {
             setTimeout(() => flamincome.__before__(f), 1000)
             return
         }
+        if (flamincome.__abi__.weth == null) {
+            flamincome.__display__('loading abi.weth ...')
+            setTimeout(() => flamincome.__before__(f), 1000)
+            return
+        }
         try {
             f()
         } catch (err) {
@@ -145,16 +156,23 @@ let flamincome = {
     __get_vault_by_symbol__: function (symbol) {
         let vault = flamincome.__registry__.vault[symbol]
         if (!vault) {
-            throw { message: `cannout find registry '${symbol}'` }
+            throw { message: `canout find registry '${symbol}'` }
         }
         return new web3.eth.Contract(flamincome.__abi__.vault_baseline, vault)
     },
     __get_erc20_by_symbol__: function (symbol) {
         let erc20 = flamincome.__registry__.erc20[symbol]
         if (!erc20) {
-            throw { message: `cannout find registry '${symbol}'` }
+            throw { message: `canout find registry '${symbol}'` }
         }
         return new web3.eth.Contract(flamincome.__abi__.erc20, erc20)
+    },
+    __get_weth__: function () {
+        let erc20 = flamincome.__registry__.erc20['WETH']
+        if (!erc20) {
+            throw { message: `canout find registry 'WETH'` }
+        }
+        return new web3.eth.Contract(flamincome.__abi__.weth, erc20)
     },
     __transaction__: function (tx, next) {
         tx.on('transactionHash', function (hash) {
@@ -430,6 +448,34 @@ $(document).ready(function () {
 
                 flamincome.__transaction__(
                     vault.methods.withdraw(num).send({ from: flamincome.__account__ })
+                )
+            }).catch(err => {
+                flamincome.__display__(err.message)
+                flamincome.__done__()
+            })
+        })
+    })
+    flamincome.__register__('wrap-eth-to-weth', 'wrap ETH to WETH', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let weth = flamincome.__get_weth__()
+            let amount = cmd[1]
+            if (!amount) {
+                throw { message: 'please specify the amount' }
+            }
+            let balance = web3.eth.getBalance(flamincome.__account__)
+            Promise.all([balance]).then(vals => {
+                let position = amount.indexOf('.')
+                let num = amount.concat('0'.repeat(18))
+                if (position >= 0) {
+                    let l = amount.slice(0, position)
+                    let r = amount.slice(position + 1).padEnd(18).slice(0, 18)
+                    num = l + r
+                }
+                num = new web3.utils.BN(num)
+
+                flamincome.__transaction__(
+                    weth.methods.deposit().send({ from: flamincome.__account__, value: num })
                 )
             }).catch(err => {
                 flamincome.__display__(err.message)
