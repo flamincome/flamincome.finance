@@ -2,6 +2,9 @@
     <div id="terminal" style="scrollbar-width: thin;">loading ...</div>
 </div>
 <footer>
+<a href="https://docs.flamincome.finance">docs</a>
+&emsp;
+<a href="https://github.com/flamincome">code</a>
 </footer>
 <script src="jquery.min.js"></script>
 <script src="ptty.jquery.min.js"></script>
