@@ -58,6 +58,7 @@ let flamincome = {
         root.style.backgroundColor = 'rgba(0,0,0,0.9)'
         root.style.border = '1px solid rgba(255,255,255,0.15)'
         logo.id = Math.random().toFixed(50).substr(2)
+        logo.innerText = flamincome.__logo__
         let refresh = function () {
             if (flamincome.__logo__.length == 0) {
                 $(`#${logo.id}`).text('loading ...')
@@ -117,12 +118,22 @@ let flamincome = {
     __welcome__: function () {
         let welcome = document.createElement('div')
         let welcome_header = document.createElement('p')
-        let welcome_logo = flamincome.__speak__(null)
+        let div = document.createElement('div')
+        let flamingo = document.createElement('img')
+        let text = document.createElement('p')
+        text.innerText = 'Nice to meet you, babe    '
+        text.style.height = flamingo.height
+        text.style.display = 'inline'
+        flamingo.src = 'https://flamingo.finance/favicon.ico'
+        flamingo.style.width = flamingo.height
+        div.appendChild(text)
+        div.appendChild(flamingo)
+        let welcome_logo = flamincome.__speak__(div)
         let welcome_footer = document.createElement('p')
         welcome_header.style.textAlign = 'center'
         welcome_footer.style.textAlign = 'center'
         welcome_header.innerHTML = 'welcome to <b>flamincome</b>'
-        welcome_footer.innerHTML = 'docs is comming soon (console UI is current under developing)<br><b>USE AT YOUR OWN RISK!!!</b>'
+        welcome_footer.innerHTML = 'terminal UI is current under developing (see more on <a href="https://docs.flamincome.finance">docs</a>)<br><b>USE AT YOUR OWN RISK!!!</b>'
         welcome.appendChild(welcome_header)
         welcome.appendChild(welcome_logo)
         welcome.appendChild(welcome_footer)
@@ -198,6 +209,17 @@ $(document).ready(function () {
             welcome: flamincome.__welcome__().outerHTML,
         }
     });
+    flamincome.__register__('flamincome:', 'flamincome can speak', cmd => {
+        flamincome.__before__(() => {
+            let args = flamincome.__ptty__.get_command_option('last').split(' ')
+            args.shift()
+            let p = document.createElement('p')
+            p.innerText = args.join(' ')
+            let out = flamincome.__speak__(p)
+            flamincome.__display__(out.outerHTML)
+            flamincome.__done__()
+        })
+    })
     flamincome.__register__('connect-wallet', 'connect wallet', cmd => {
         flamincome.__before__(() => {
             window.ethereum.send('eth_requestAccounts').then(v => {
@@ -525,7 +547,7 @@ $(document).ready(function () {
                     num = amount.concat('0'.repeat(vals[1]))
                     if (position >= 0) {
                         let l = amount.slice(0, position)
-                        let r = amount.slice(position + 1).padEnd(vals[1],'0').slice(0, vals[1])
+                        let r = amount.slice(position + 1).padEnd(vals[1], '0').slice(0, vals[1])
                         num = l + r
                     }
                 }
