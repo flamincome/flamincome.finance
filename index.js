@@ -382,7 +382,7 @@ $(document).ready(function () {
                     num = amount.concat('0'.repeat(vals[1]))
                     if (position >= 0) {
                         let l = amount.slice(0, position)
-                        let r = amount.slice(position + 1).padEnd(vals[1]).slice(0, vals[1])
+                        let r = amount.slice(position + 1).padEnd(vals[1], '0').slice(0, vals[1])
                         num = l + r
                     }
                 }
@@ -429,7 +429,6 @@ $(document).ready(function () {
         flamincome.__before__(() => {
             flamincome.__check_connection__()
             let vault = flamincome.__get_vault_by_symbol__(cmd[1])
-            let erc20 = flamincome.__get_erc20_by_symbol__(cmd[1])
             let amount = cmd[2]
             let balanceOf = vault.methods.balanceOf(flamincome.__account__).call()
             let decimals = vault.methods.decimals().call()
@@ -440,7 +439,7 @@ $(document).ready(function () {
                     num = amount.concat('0'.repeat(vals[1]))
                     if (position >= 0) {
                         let l = amount.slice(0, position)
-                        let r = amount.slice(position + 1).padEnd(vals[1]).slice(0, vals[1])
+                        let r = amount.slice(position + 1).padEnd(vals[1], '0').slice(0, vals[1])
                         num = l + r
                     }
                 }
@@ -469,7 +468,7 @@ $(document).ready(function () {
                 let num = amount.concat('0'.repeat(18))
                 if (position >= 0) {
                     let l = amount.slice(0, position)
-                    let r = amount.slice(position + 1).padEnd(18).slice(0, 18)
+                    let r = amount.slice(position + 1).padEnd(18, '0').slice(0, 18)
                     num = l + r
                 }
                 num = new web3.utils.BN(num)
@@ -483,4 +482,32 @@ $(document).ready(function () {
             })
         })
     })
+    // flamincome.__register__('unwrap-weth-to-eth', 'unwrap WETH to ETH', cmd => {
+    //     flamincome.__before__(() => {
+    //         flamincome.__check_connection__()
+    //         let weth = flamincome.__get_weth__()
+    //         let amount = cmd[1]
+    //         let balanceOf = weth.methods.balanceOf(flamincome.__account__).call()
+    //         Promise.all([balanceOf]).then(vals => {
+    //             let num = vals[0]
+    //             if (amount) {
+    //                 let position = amount.indexOf('.')
+    //                 num = amount.concat('0'.repeat(vals[1]))
+    //                 if (position >= 0) {
+    //                     let l = amount.slice(0, position)
+    //                     let r = amount.slice(position + 1).padEnd(vals[1],'0').slice(0, vals[1])
+    //                     num = l + r
+    //                 }
+    //             }
+    //             num = new web3.utils.BN(num)
+
+    //             flamincome.__transaction__(
+    //                 weth.methods.withdraw(num).send({ from: flamincome.__account__ })
+    //             )
+    //         }).catch(err => {
+    //             flamincome.__display__(err.message)
+    //             flamincome.__done__()
+    //         })
+    //     })
+    // })
 });
