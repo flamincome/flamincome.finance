@@ -298,10 +298,40 @@ $(document).ready(function () {
             })
         })
     })
-    flamincome.__register__('get-value-of-ftoken-by-symbol', 'get total value of flamincomed token', cmd => {
+    flamincome.__register__('get-value-of-ftoken-by-symbol', 'get underlying value of an account', cmd => {
         flamincome.__before__(() => {
             flamincome.__check_connection__()
-            let vault = flamincome.__get_vault_by_symbol__(cmd[1])
+            let symbol = cmd[1]
+            let vault = flamincome.__get_vault_by_symbol__(symbol)
+            let account = cmd[2]
+            if (!account) {
+                account = flamincome.__account__
+            }
+            let balanceOf = vault.methods.balanceOf(account).call()
+            let decimals = vault.methods.decimals().call()
+            let priceE18 = vault.methods.priceE18().call()
+            Promise.all([balanceOf, decimals, priceE18]).then(vals => {
+                let balanceOf = new web3.utils.BN(vals[0])
+                let priceE18 = new web3.utils.BN(vals[2])
+                balanceOf = balanceOf.mul(priceE18).div(new web3.utils.BN('1000000000000000000'))
+                balanceOf = balanceOf.toString()
+                let decimals = parseInt(vals[1])
+                balanceOf = balanceOf.padStart(decimals, '0')
+                let position = balanceOf.length - decimals
+                var output = [balanceOf.slice(0, position), balanceOf.slice(position)].join('.');
+                flamincome.__display__(`${output} ${symbol}`)
+                flamincome.__done__()
+            }).catch(err => {
+                flamincome.__display__(err.message)
+                flamincome.__done__()
+            })
+        })
+    })
+    flamincome.__register__('get-totalvalue-of-ftoken-by-symbol', 'get total value of flamincomed token', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let symbol = cmd[1]
+            let vault = flamincome.__get_vault_by_symbol__(symbol)
             let balances = vault.methods.balance().call()
             let decimals = vault.methods.decimals().call()
             Promise.all([balances, decimals]).then(vals => {
@@ -310,7 +340,7 @@ $(document).ready(function () {
                 balances = balances.padStart(decimals, '0')
                 let position = balances.length - decimals
                 var output = [balances.slice(0, position), balances.slice(position)].join('.');
-                flamincome.__display__(output)
+                flamincome.__display__(`${output} ${symbol}`)
                 flamincome.__done__()
             }).catch(err => {
                 flamincome.__display__(err.message)
