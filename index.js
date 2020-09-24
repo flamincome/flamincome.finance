@@ -318,7 +318,7 @@ $(document).ready(function () {
             flamincome.__done__()
         })
     })
-    flamincome.__register__('list-registry-of-normalziers', 'list registry of normalizers', cmd => {
+    flamincome.__register__('list-registry-of-normalizers', 'list registry of normalizers', cmd => {
         flamincome.__before__(() => {
             let filter = ''
             let out = document.createElement('table')
