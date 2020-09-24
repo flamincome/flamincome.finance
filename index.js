@@ -232,7 +232,7 @@ $(document).ready(function () {
             })
         })
     })
-    flamincome.__register__('list-registry-of-erc20', 'list registry', cmd => {
+    flamincome.__register__('list-registry-of-erc20s', 'list registry of supported erc20s', cmd => {
         flamincome.__before__(() => {
             let filter = ''
             let out = document.createElement('table')
@@ -264,7 +264,7 @@ $(document).ready(function () {
             flamincome.__done__()
         })
     })
-    flamincome.__register__('list-registry-of-vault', 'list registry', cmd => {
+    flamincome.__register__('list-registry-of-vaults', 'list registry of vaults', cmd => {
         flamincome.__before__(() => {
             let filter = ''
             let out = document.createElement('table')
@@ -290,6 +290,38 @@ $(document).ready(function () {
                 row.appendChild(address)
                 out.appendChild(row)
                 name.innerText = `f${k} (vault of ${k})`
+                address.innerText = flamincome.__registry__.vault[k]
+            }
+            flamincome.__display__(out.outerHTML)
+            flamincome.__done__()
+        })
+    })
+    flamincome.__register__('list-registry-of-normalziers', 'list registry of normalizers', cmd => {
+        flamincome.__before__(() => {
+            let filter = ''
+            let out = document.createElement('table')
+            let head = document.createElement('tr')
+            let name = document.createElement('th')
+            let address = document.createElement('th')
+            head.appendChild(name)
+            head.appendChild(address)
+            out.appendChild(head)
+            name.innerText = 'contract name'
+            address.innerText = 'contract address'
+            if (cmd[1]) {
+                filter = cmd[1]
+            }
+            for (var k in flamincome.__registry__.normalizer) {
+                if (!k.startsWith(filter)) {
+                    continue
+                }
+                let row = document.createElement('tr')
+                let name = document.createElement('th')
+                let address = document.createElement('th')
+                row.appendChild(name)
+                row.appendChild(address)
+                out.appendChild(row)
+                name.innerText = `n${k} (normalizer of ${k})`
                 address.innerText = flamincome.__registry__.vault[k]
             }
             flamincome.__display__(out.outerHTML)
