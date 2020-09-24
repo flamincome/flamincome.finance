@@ -40,6 +40,12 @@ let flamincome = {
             console.log(err)
             setTimeout(flamincome.__init__, 1000)
         })
+        fetch('/assets/reg.normalizer.json').then(resp => resp.text()).then(text => {
+            flamincome.__registry__.normalizer = JSON.parse(text)
+        }).catch(err => {
+            console.log(err)
+            setTimeout(flamincome.__init__, 1000)
+        })
     },
     __ptty__: null,
     __abi__: {},
@@ -88,8 +94,18 @@ let flamincome = {
     },
     __before__: function (f) {
         flamincome.__ptty__.get_terminal('.prompt').hide()
-        if (flamincome.__registry__ == null) {
-            flamincome.__display__('loading registry ...')
+        if (flamincome.__registry__.erc20 == null) {
+            flamincome.__display__('loading registry.erc20 ...')
+            setTimeout(() => flamincome.__before__(f), 1000)
+            return
+        }
+        if (flamincome.__registry__.vault == null) {
+            flamincome.__display__('loading registry.vault ...')
+            setTimeout(() => flamincome.__before__(f), 1000)
+            return
+        }
+        if (flamincome.__registry__.normalizer == null) {
+            flamincome.__display__('loading registry.normalizer ...')
             setTimeout(() => flamincome.__before__(f), 1000)
             return
         }
