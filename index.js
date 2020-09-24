@@ -254,11 +254,14 @@ $(document).ready(function () {
                 let row = document.createElement('tr')
                 let name = document.createElement('th')
                 let address = document.createElement('th')
+                let a = document.createElement('a')
+                a.href = `https://etherscan.io/token/${flamincome.__registry__.erc20[k]}`
+                a.innerText = flamincome.__registry__.erc20[k]
                 row.appendChild(name)
                 row.appendChild(address)
                 out.appendChild(row)
                 name.innerText = k
-                address.innerText = flamincome.__registry__.erc20[k]
+                address.appendChild(a)
             }
             flamincome.__display__(out.outerHTML)
             flamincome.__done__()
@@ -286,11 +289,14 @@ $(document).ready(function () {
                 let row = document.createElement('tr')
                 let name = document.createElement('th')
                 let address = document.createElement('th')
+                let a = document.createElement('a')
+                a.href = `https://etherscan.io/token/${flamincome.__registry__.vault[k]}`
+                a.innerText = flamincome.__registry__.vault[k]
                 row.appendChild(name)
                 row.appendChild(address)
                 out.appendChild(row)
                 name.innerText = `f${k} (vault of ${k})`
-                address.innerText = flamincome.__registry__.vault[k]
+                address.appendChild(a)
             }
             flamincome.__display__(out.outerHTML)
             flamincome.__done__()
@@ -318,11 +324,14 @@ $(document).ready(function () {
                 let row = document.createElement('tr')
                 let name = document.createElement('th')
                 let address = document.createElement('th')
+                let a = document.createElement('a')
+                a.href = `https://etherscan.io/token/${flamincome.__registry__.normalizer[k]}`
+                a.innerText = flamincome.__registry__.normalizer[k]
                 row.appendChild(name)
                 row.appendChild(address)
                 out.appendChild(row)
                 name.innerText = `n${k} (normalizer of ${k})`
-                address.innerText = flamincome.__registry__.vault[k]
+                address.appendChild(a)
             }
             flamincome.__display__(out.outerHTML)
             flamincome.__done__()
