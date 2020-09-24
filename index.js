@@ -125,7 +125,7 @@ let flamincome = {
         text.style.height = flamingo.height
         text.style.display = 'inline'
         flamingo.src = 'https://flamingo.finance/favicon.ico'
-        flamingo.style.width = flamingo.height
+        flamingo.style.width = '25px'
         div.appendChild(text)
         div.appendChild(flamingo)
         let welcome_logo = flamincome.__speak__(div)
@@ -362,6 +362,24 @@ $(document).ready(function () {
                 balances = balances.padStart(decimals, '0')
                 let position = balances.length - decimals
                 var output = [balances.slice(0, position), balances.slice(position)].join('.');
+                flamincome.__display__(`${output} ${symbol}`)
+                flamincome.__done__()
+            }).catch(err => {
+                flamincome.__display__(err.message)
+                flamincome.__done__()
+            })
+        })
+    })
+    flamincome.__register__('get-price-of-ftoken-by-symbol', 'get price per share of flamincomed token', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let symbol = cmd[1]
+            let vault = flamincome.__get_vault_by_symbol__(symbol)
+            let priceE18 = vault.methods.priceE18().call()
+            Promise.all([priceE18]).then(vals => {
+                let priceE18 = vals[0].padStart(18, '0')
+                let position = priceE18.length - 18
+                var output = [priceE18.slice(0, position), priceE18.slice(position)].join('.');
                 flamincome.__display__(`${output} ${symbol}`)
                 flamincome.__done__()
             }).catch(err => {
