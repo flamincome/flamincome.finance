@@ -137,7 +137,7 @@ let flamincome = {
         let div = document.createElement('div')
         let flamingo = document.createElement('img')
         let text = document.createElement('p')
-        text.innerText = 'Nice to meet you, babe    '
+        text.innerText = 'Oh, babe, time for lunch    '
         text.style.height = flamingo.height
         text.style.display = 'inline'
         flamingo.src = 'https://flamingo.finance/favicon.ico'
@@ -149,7 +149,7 @@ let flamincome = {
         welcome_header.style.textAlign = 'center'
         welcome_footer.style.textAlign = 'center'
         welcome_header.innerHTML = 'welcome to <b>flamincome</b>'
-        welcome_footer.innerHTML = 'terminal UI is current under developing (see more on <a href="https://docs.flamincome.finance">docs</a>)<br><b>USE AT YOUR OWN RISK!!!</b>'
+        welcome_footer.innerHTML = 'terminal UI is in beta; <a href="https://docs.flamincome.finance">docs</a> is in beta; ensure risks before operations <br><b>USE AT YOUR OWN RISK!!!</b>'
         welcome.appendChild(welcome_header)
         welcome.appendChild(welcome_logo)
         welcome.appendChild(welcome_footer)
@@ -403,6 +403,38 @@ $(document).ready(function () {
             }).catch(err => {
                 flamincome.__display__(err.message)
                 flamincome.__done__()
+            })
+        })
+    })
+    flamincome.__register__('get-apy-of-ftoken-by-symbol', 'get apy of a vault', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let symbol = cmd[1]
+            let db = cmd[2]
+            if (!db) {
+                db = 10000
+            }
+            let vault = flamincome.__get_vault_by_symbol__(symbol)
+            web3.eth.getBlockNumber().then(num => {
+                let nl = num - db
+                let nr = num
+                let bl = web3.eth.getBlock(nl)
+                let br = web3.eth.getBlock(nr)
+                Promise.all([bl, br]).then(vals => {
+                    let bl = vals[0]
+                    let br = vals[1]
+                    let duration = br.timestamp - bl.timestamp
+                    let pl = vault.methods.priceE18().call({}, nl)
+                    let pr = vault.methods.priceE18().call({}, nr)
+                    Promise.all([pl, pr]).then(vals => {
+                        let pl = parseFloat(vals[0])
+                        let pr = parseFloat(vals[1])
+                        console.log((pr / pl) ** (31557600 / duration))
+                        let apy = (((pr / pl) ** (31557600 / duration) - 1) * 100).toFixed(2)
+                        flamincome.__display__(`${apy} %`)
+                        flamincome.__done__()
+                    })
+                })
             })
         })
     })
