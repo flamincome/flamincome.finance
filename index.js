@@ -28,6 +28,12 @@ let flamincome = {
             console.log(err)
             setTimeout(flamincome.__init__, 1000)
         })
+        fetch('/assets/abi.normalizer_methane.json').then(resp => resp.text()).then(text => {
+            flamincome.__abi__.normalizer_methane = JSON.parse(text)
+        }).catch(err => {
+            console.log(err)
+            setTimeout(flamincome.__init__, 1000)
+        })
         fetch('/assets/reg.erc20.json').then(resp => resp.text()).then(text => {
             flamincome.__registry__.erc20 = JSON.parse(text)
         }).catch(err => {
@@ -186,6 +192,13 @@ let flamincome = {
             throw { message: `canout find registry '${symbol}'` }
         }
         return new web3.eth.Contract(flamincome.__abi__.vault_baseline, vault)
+    },
+    __get_normalizer_by_symbol__: function (symbol) {
+        let normalizer = flamincome.__registry__.normalizer[symbol]
+        if (!normalizer) {
+            throw { message: `canout find registry '${symbol}'` }
+        }
+        return new web3.eth.Contract(flamincome.__abi__.normalizer_methane, normalizer)
     },
     __get_erc20_by_symbol__: function (symbol) {
         let erc20 = flamincome.__registry__.erc20[symbol]
@@ -667,6 +680,17 @@ $(document).ready(function () {
                 flamincome.__display__(err.message)
                 flamincome.__done__()
             })
+        })
+    })
+    flamincome.__register__('withdraw-ftoken-from-normalizer-as-raw', 'burn ntoken to withdraw ftoken', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let normalizer = flamincome.__get_normalizer_by_symbol__(cmd[1])
+            let w = cmd[2]
+            let d = cmd[3]
+            flamincome.__transaction__(
+                normalizer.methods.UnrealizeFToken(w, d).send({ from: flamincome.__account__ })
+            )
         })
     })
 });
