@@ -682,6 +682,28 @@ $(document).ready(function () {
             })
         })
     })
+    flamincome.__register__('withdrawall-ftoken-from-normalizer', 'burn ntoken to withdraw ftoken', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let normalizer = flamincome.__get_normalizer_by_symbol__(cmd[1])
+            let f = normalizer.methods.f(flamincome.__account__).call()
+            let n = normalizer.methods.n(flamincome.__account__).call()
+            let balanceOf = normalizer.methods.balanceOf(flamincome.__account__).call()
+            Promise.all([f, n, balanceOf]).then(vals => {
+                let f = new web3.utils.BN(vals[0])
+                let n = new web3.utils.BN(vals[1])
+                let balanceOf = new web3.utils.BN(vals[2])
+                if (balanceOf.cmp(n) == -1) {
+                    flamincome.__display__('not enough balance')
+                    flamincome.__done__()
+                    return
+                }
+                flamincome.__transaction__(
+                    normalizer.methods.UnrealizeFToken(f, n).send({ from: flamincome.__account__ })
+                )
+            })
+        })
+    })
     flamincome.__register__('withdraw-ftoken-from-normalizer-as-raw', 'burn ntoken to withdraw ftoken', cmd => {
         flamincome.__before__(() => {
             flamincome.__check_connection__()
