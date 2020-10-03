@@ -4,49 +4,49 @@ let flamincome = {
             window.web3 = new Web3(web3.currentProvider)
         } catch{
         }
-        fetch('/assets/logo').then(resp => resp.text()).then(text => {
+        fetch('https://cdn.jsdelivr.net/gh/flamincome/logo/flamincome').then(resp => resp.text()).then(text => {
             flamincome.__logo__ = text
         }).catch(err => {
             console.log(err)
             setTimeout(flamincome.__init__, 1000)
         })
-        fetch('/assets/abi.vault_baseline.json').then(resp => resp.text()).then(text => {
+        fetch('https://cdn.jsdelivr.net/gh/flamincome/registry/abi/vault.baseline.json').then(resp => resp.text()).then(text => {
             flamincome.__abi__.vault_baseline = JSON.parse(text)
         }).catch(err => {
             console.log(err)
             setTimeout(flamincome.__init__, 1000)
         })
-        fetch('/assets/abi.erc20.json').then(resp => resp.text()).then(text => {
+        fetch('https://cdn.jsdelivr.net/gh/flamincome/registry/abi/erc20.json').then(resp => resp.text()).then(text => {
             flamincome.__abi__.erc20 = JSON.parse(text)
         }).catch(err => {
             console.log(err)
             setTimeout(flamincome.__init__, 1000)
         })
-        fetch('/assets/abi.weth.json').then(resp => resp.text()).then(text => {
+        fetch('https://cdn.jsdelivr.net/gh/flamincome/registry/abi/weth.json').then(resp => resp.text()).then(text => {
             flamincome.__abi__.weth = JSON.parse(text)
         }).catch(err => {
             console.log(err)
             setTimeout(flamincome.__init__, 1000)
         })
-        fetch('/assets/abi.normalizer_methane.json').then(resp => resp.text()).then(text => {
+        fetch('https://cdn.jsdelivr.net/gh/flamincome/registry/abi/normalizer.methane.json').then(resp => resp.text()).then(text => {
             flamincome.__abi__.normalizer_methane = JSON.parse(text)
         }).catch(err => {
             console.log(err)
             setTimeout(flamincome.__init__, 1000)
         })
-        fetch('/assets/reg.erc20.json').then(resp => resp.text()).then(text => {
+        fetch('https://cdn.jsdelivr.net/gh/flamincome/registry/address/erc20.json').then(resp => resp.text()).then(text => {
             flamincome.__registry__.erc20 = JSON.parse(text)
         }).catch(err => {
             console.log(err)
             setTimeout(flamincome.__init__, 1000)
         })
-        fetch('/assets/reg.vault.json').then(resp => resp.text()).then(text => {
+        fetch('https://cdn.jsdelivr.net/gh/flamincome/registry/address/vault.json').then(resp => resp.text()).then(text => {
             flamincome.__registry__.vault = JSON.parse(text)
         }).catch(err => {
             console.log(err)
             setTimeout(flamincome.__init__, 1000)
         })
-        fetch('/assets/reg.normalizer.json').then(resp => resp.text()).then(text => {
+        fetch('https://cdn.jsdelivr.net/gh/flamincome/registry/address/normalizer.json').then(resp => resp.text()).then(text => {
             flamincome.__registry__.normalizer = JSON.parse(text)
         }).catch(err => {
             console.log(err)
