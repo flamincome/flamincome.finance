@@ -433,16 +433,13 @@ $(document).ready(function () {
                 let nr = num
                 let bl = web3.eth.getBlock(nl)
                 let br = web3.eth.getBlock(nr)
-                Promise.all([bl, br]).then(vals => {
-                    let bl = vals[0]
-                    let br = vals[1]
+                Promise.all([bl, br]).then(([bl, br]) => {
                     let duration = br.timestamp - bl.timestamp
                     let pl = vault.methods.priceE18().call({}, nl)
                     let pr = vault.methods.priceE18().call({}, nr)
-                    Promise.all([pl, pr]).then(vals => {
-                        let pl = parseFloat(vals[0])
-                        let pr = parseFloat(vals[1])
-                        console.log((pr / pl) ** (31557600 / duration))
+                    Promise.all([pl, pr]).then(([pl, pr]) => {
+                        pl = parseFloat(pl)
+                        pr = parseFloat(pr)
                         let apy = (((pr / pl) ** (31557600 / duration) - 1) * 100).toFixed(2)
                         flamincome.__display__(`${apy} %`)
                         flamincome.__done__()
