@@ -679,6 +679,70 @@ $(document).ready(function () {
             })
         })
     })
+    flamincome.__register__('deposit-ftoken-to-normalizer', 'deposit ftoken to mint ntoken', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let normalizer = flamincome.__get_normalizer_by_symbol__(cmd[1])
+            let vault = flamincome.__get_vault_by_symbol__(cmd[1])
+            let deposit = cmd[2]
+            let mint = cmd[3]
+            if (!deposit) {
+                throw { message: 'please specify the deposit amount and mint amount' }
+            }
+            if (!mint) {
+                throw { message: 'please specify the deposit amount and mint amount' }
+            }
+            let decimals = normalizer.methods.decimals().call()
+            let allowance = vault.methods.allowance(flamincome.__account__, normalizer._address).call()
+            Promise.all([allowance, decimals]).then(([allowance, decimals]) => {
+                let position = deposit.indexOf('.')
+                let d = deposit.concat('0'.repeat(decimals))
+                if (position >= 0) {
+                    let l = deposit.slice(0, position)
+                    let r = deposit.slice(position + 1).padEnd(decimals, '0').slice(0, decimals)
+                    d = l + r
+                }
+                position = mint.indexOf('.')
+                let m = mint.concat('0'.repeat(decimals))
+                if (position >= 0) {
+                    let l = mint.slice(0, position)
+                    let r = mint.slice(position + 1).padEnd(decimals, '0').slice(0, decimals)
+                    m = l + r
+                }
+                allowance = new web3.utils.BN(allowance)
+                if (allowance.cmp(d) == -1) {
+                    if (allowance > 0) {
+                        flamincome.__transaction__(
+                            vault.methods.approve(normalizer._address, 0).send({ from: flamincome.__account__ }),
+                            function () {
+                                flamincome.__transaction__(
+                                    vault.methods.approve(normalizer._address, new web3.utils.BN(2).pow(new web3.utils.BN(256)).subn(1)).send({ from: flamincome.__account__ }),
+                                    function () {
+                                        flamincome.__transaction__(
+                                            normalizer.methods.RealizeFToken(d, m).send({ from: flamincome.__account__ })
+                                        )
+                                    }
+                                )
+                            }
+                        )
+                        return
+                    }
+                    flamincome.__transaction__(
+                        vault.methods.approve(normalizer._address, new web3.utils.BN(2).pow(new web3.utils.BN(256)).subn(1)).send({ from: flamincome.__account__ }),
+                        function () {
+                            flamincome.__transaction__(
+                                normalizer.methods.RealizeFToken(d, m).send({ from: flamincome.__account__ })
+                            )
+                        }
+                    )
+                    return
+                }
+                flamincome.__transaction__(
+                    normalizer.methods.RealizeFToken(d, m).send({ from: flamincome.__account__ })
+                )
+            })
+        })
+    })
     flamincome.__register__('withdrawall-ftoken-from-normalizer', 'burn ntoken to withdraw ftoken', cmd => {
         flamincome.__before__(() => {
             flamincome.__check_connection__()
