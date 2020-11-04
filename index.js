@@ -890,6 +890,40 @@ $(document).ready(function () {
             )
         })
     })
+    flamincome.__register__('get-amount-of-staking', 'get staking amount', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let staking = flamincome.__get_staking_by_symbol__(cmd[1])
+            let balanceOf = staking.methods.balanceOf(flamincome.__account__).call()
+            Promise.all([balanceOf]).then(vals => {
+                let balanceOf = vals[0].padStart(18, '0')
+                let position = balanceOf.length - 18
+                var output = [balanceOf.slice(0, position), balanceOf.slice(position)].join('.');
+                flamincome.__display__(`${output} UNI-V2`)
+                flamincome.__done__()
+            }).catch(err => {
+                flamincome.__display__(err.message)
+                flamincome.__done__()
+            })
+        })
+    })
+    flamincome.__register__('get-earning-of-staking', 'get staking earning', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let staking = flamincome.__get_staking_by_symbol__(cmd[1])
+            let earned = staking.methods.earned(flamincome.__account__).call()
+            Promise.all([earned]).then(vals => {
+                let earned = vals[0].padStart(18, '0')
+                let position = earned.length - 18
+                var output = [earned.slice(0, position), earned.slice(position)].join('.');
+                flamincome.__display__(`${output} FLAG`)
+                flamincome.__done__()
+            }).catch(err => {
+                flamincome.__display__(err.message)
+                flamincome.__done__()
+            })
+        })
+    })
     flamincome.__register__('withdraw-ftoken-from-normalizer-as-raw', 'burn ntoken to withdraw ftoken', cmd => {
         flamincome.__before__(() => {
             flamincome.__check_connection__()
