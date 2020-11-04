@@ -214,6 +214,34 @@ let flamincome = {
         }
         return new web3.eth.Contract(flamincome.__abi__.weth, erc20)
     },
+    __get_staking_by_symbol__: function (symbol) {
+        // ADHOC
+        let abi = [{ "inputs": [{ "internalType": "address", "name": "_rewardsDistribution", "type": "address" }, { "internalType": "address", "name": "_rewardsToken", "type": "address" }, { "internalType": "address", "name": "_stakingToken", "type": "address" }], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "reward", "type": "uint256" }], "name": "RewardAdded", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "user", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "reward", "type": "uint256" }], "name": "RewardPaid", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "user", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Staked", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "user", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Withdrawn", "type": "event" }, { "constant": true, "inputs": [{ "internalType": "address", "name": "account", "type": "address" }], "name": "balanceOf", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "internalType": "address", "name": "account", "type": "address" }], "name": "earned", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "exit", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [], "name": "getReward", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "getRewardForDuration", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "lastTimeRewardApplicable", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "lastUpdateTime", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "uint256", "name": "reward", "type": "uint256" }], "name": "notifyRewardAmount", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "periodFinish", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "rewardPerToken", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "rewardPerTokenStored", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "rewardRate", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "rewards", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "rewardsDistribution", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "rewardsDuration", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "rewardsToken", "outputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "stake", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "uint256", "name": "amount", "type": "uint256" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }, { "internalType": "uint8", "name": "v", "type": "uint8" }, { "internalType": "bytes32", "name": "r", "type": "bytes32" }, { "internalType": "bytes32", "name": "s", "type": "bytes32" }], "name": "stakeWithPermit", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "stakingToken", "outputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "totalSupply", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "userRewardPerTokenPaid", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "withdraw", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }]
+
+        switch (symbol) {
+            case 'USDT':
+                return new web3.eth.Contract(abi, '0x5da42899d108FEF66689D46025ABB5E647B8477B')
+            case 'WBTC':
+                return new web3.eth.Contract(abi, '0xBc85c2b7999D4fBeA71C30Bc3ba1Cac2A0648d9E')
+            case 'WETH':
+                return new web3.eth.Contract(abi, '0xb9B1b40823e5B63d81794c6279AeBc3405B5534d')
+            default:
+                throw { message: `canout find registry '${symbol}'` }
+        }
+    },
+    __get_lp_by_symbol__: function (symbol) {
+        // ADHOC
+        switch (symbol) {
+            case 'USDT':
+                return new web3.eth.Contract(flamincome.__abi__.erc20, '0xFF4eB4541Ccb20587c78c8639dd89Cbe2588a4d0')
+            case 'WBTC':
+                return new web3.eth.Contract(flamincome.__abi__.erc20, '0x7E2a722FC51b0F693F0c60a43e656787f27509Ab')
+            case 'WETH':
+                return new web3.eth.Contract(flamincome.__abi__.erc20, '0x8F86981955cd59E512150D0dd1425748E556a9d9')
+            default:
+                throw { message: `canout find registry '${symbol}'` }
+        }
+    },
     __transaction__: function (tx, next) {
         tx.on('transactionHash', function (hash) {
             flamincome.__display__(`waiting for confirming ...<br>${hash}`)
@@ -763,6 +791,103 @@ $(document).ready(function () {
                     normalizer.methods.UnrealizeFToken(f, n).send({ from: flamincome.__account__ })
                 )
             })
+        })
+    })
+    flamincome.__register__('stake-lptoken', 'stake uniswap lptoken', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let staking = flamincome.__get_staking_by_symbol__(cmd[1])
+            let lp = flamincome.__get_lp_by_symbol__(cmd[1])
+            let amount = cmd[2]
+            let allowance = lp.methods.allowance(flamincome.__account__, staking._address).call()
+            let balanceOf = lp.methods.balanceOf(flamincome.__account__).call()
+            let decimals = lp.methods.decimals().call()
+            Promise.all([balanceOf, decimals, allowance]).then(vals => {
+                let num = vals[0]
+                if (amount) {
+                    let position = amount.indexOf('.')
+                    num = amount.concat('0'.repeat(vals[1]))
+                    if (position >= 0) {
+                        let l = amount.slice(0, position)
+                        let r = amount.slice(position + 1).padEnd(vals[1], '0').slice(0, vals[1])
+                        num = l + r
+                    }
+                }
+                num = new web3.utils.BN(num)
+                let allowance = new web3.utils.BN(vals[2])
+
+                if (allowance.cmp(num) == -1) {
+                    if (allowance > 0) {
+                        flamincome.__transaction__(
+                            lp.methods.approve(staking._address, 0).send({ from: flamincome.__account__ }),
+                            function () {
+                                flamincome.__transaction__(
+                                    lp.methods.approve(staking._address, new web3.utils.BN(2).pow(new web3.utils.BN(256)).subn(1)).send({ from: flamincome.__account__ }),
+                                    function () {
+                                        flamincome.__transaction__(
+                                            staking.methods.stake(num).send({ from: flamincome.__account__ })
+                                        )
+                                    }
+                                )
+                            }
+                        )
+                        return
+                    }
+                    flamincome.__transaction__(
+                        lp.methods.approve(staking._address, new web3.utils.BN(2).pow(new web3.utils.BN(256)).subn(1)).send({ from: flamincome.__account__ }),
+                        function () {
+                            flamincome.__transaction__(
+                                staking.methods.stake(num).send({ from: flamincome.__account__ })
+                            )
+                        }
+                    )
+                    return
+                }
+                flamincome.__transaction__(
+                    staking.methods.stake(num).send({ from: flamincome.__account__ })
+                )
+            }).catch(err => {
+                flamincome.__display__(err.message)
+                flamincome.__done__()
+            })
+        })
+    })
+    flamincome.__register__('unstake-lptoken', 'unstake uniswap lptoken', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let staking = flamincome.__get_staking_by_symbol__(cmd[1])
+            let amount = cmd[2]
+            let balanceOf = staking.methods.balanceOf(flamincome.__account__).call()
+            let decimals = staking.methods.decimals().call()
+            Promise.all([balanceOf, decimals]).then(vals => {
+                let num = vals[0]
+                if (amount) {
+                    let position = amount.indexOf('.')
+                    num = amount.concat('0'.repeat(vals[1]))
+                    if (position >= 0) {
+                        let l = amount.slice(0, position)
+                        let r = amount.slice(position + 1).padEnd(vals[1], '0').slice(0, vals[1])
+                        num = l + r
+                    }
+                }
+                num = new web3.utils.BN(num)
+
+                flamincome.__transaction__(
+                    staking.methods.withdraw(num).send({ from: flamincome.__account__ })
+                )
+            }).catch(err => {
+                flamincome.__display__(err.message)
+                flamincome.__done__()
+            })
+        })
+    })
+    flamincome.__register__('claim-reward-of-staking', 'claim staking reward', cmd => {
+        flamincome.__before__(() => {
+            flamincome.__check_connection__()
+            let staking = flamincome.__get_staking_by_symbol__(cmd[1])
+            flamincome.__transaction__(
+                staking.methods.getReward().send({ from: flamincome.__account__ })
+            )
         })
     })
     flamincome.__register__('withdraw-ftoken-from-normalizer-as-raw', 'burn ntoken to withdraw ftoken', cmd => {
