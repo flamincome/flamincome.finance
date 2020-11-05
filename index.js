@@ -737,6 +737,7 @@ $(document).ready(function () {
                     let r = mint.slice(position + 1).padEnd(decimals, '0').slice(0, decimals)
                     m = l + r
                 }
+                d = new web3.utils.BN(d)
                 allowance = new web3.utils.BN(allowance)
                 if (allowance.cmp(d) == -1) {
                     if (allowance > 0) {
@@ -858,15 +859,14 @@ $(document).ready(function () {
             let staking = flamincome.__get_staking_by_symbol__(cmd[1])
             let amount = cmd[2]
             let balanceOf = staking.methods.balanceOf(flamincome.__account__).call()
-            let decimals = staking.methods.decimals().call()
-            Promise.all([balanceOf, decimals]).then(vals => {
+            Promise.all([balanceOf]).then(vals => {
                 let num = vals[0]
                 if (amount) {
                     let position = amount.indexOf('.')
-                    num = amount.concat('0'.repeat(vals[1]))
+                    num = amount.concat('0'.repeat(18))
                     if (position >= 0) {
                         let l = amount.slice(0, position)
-                        let r = amount.slice(position + 1).padEnd(vals[1], '0').slice(0, vals[1])
+                        let r = amount.slice(position + 1).padEnd(18, '0').slice(0, 18)
                         num = l + r
                     }
                 }
