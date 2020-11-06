@@ -220,11 +220,11 @@ let flamincome = {
 
         switch (symbol) {
             case 'USDT':
-                return new web3.eth.Contract(abi, '0x5da42899d108FEF66689D46025ABB5E647B8477B')
+                return new web3.eth.Contract(abi, '0x5b6D4E2468ABD943A63A9119D9C98319627fd250')
             case 'WBTC':
-                return new web3.eth.Contract(abi, '0xBc85c2b7999D4fBeA71C30Bc3ba1Cac2A0648d9E')
+                return new web3.eth.Contract(abi, '0xc3a18646BB0EB66047104910b068CfD748Ef6932')
             case 'WETH':
-                return new web3.eth.Contract(abi, '0xb9B1b40823e5B63d81794c6279AeBc3405B5534d')
+                return new web3.eth.Contract(abi, '0x97115B91d682d74455D4938C153E55FEeE760Aa7')
             default:
                 throw { message: `canout find registry '${symbol}'` }
         }
